@@ -144,7 +144,7 @@ LAYOUT = """<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{fonts}">
-<link rel="stylesheet" href="assets/css/style.css?v=9">
+<link rel="stylesheet" href="assets/css/style.css?v=10">
 </head>
 <body data-page="{page}">
 {gate}{nav}
@@ -152,8 +152,8 @@ LAYOUT = """<!doctype html>
 {main}
 </main>
 {footer}
-<script src="assets/js/widgets.js?v=9"></script>
-<script src="assets/js/main.js?v=9"></script>
+<script src="assets/js/widgets.js?v=10"></script>
+<script src="assets/js/main.js?v=10"></script>
 </body>
 </html>
 """
@@ -180,7 +180,7 @@ def project_page(meta, body, slug):
 <section class="chapter" id="slides" data-toc="포트폴리오 원본 슬라이드">
   <span class="eyebrow">Appendix</span>
   <h2>포트폴리오 원본 슬라이드</h2>
-  <p class="lede">PDF 포트폴리오 {a}~{b}쪽 전체입니다. 클릭하면 크게 보고 ← → 키로 넘길 수 있습니다.</p>
+  <p class="lede">PDF 포트폴리오 {a}~{b}쪽 전체입니다. 클릭하면 전체 화면으로 보고 ← → 키로 넘길 수 있습니다.</p>
   <div class="slide-grid" data-gallery>{btns}</div>
 </section>"""
     chapters = re.findall(r'<section class="chapter[^"]*" id="([^"]+)" data-toc="([^"]+)"', body)
