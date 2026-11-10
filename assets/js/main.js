@@ -25,18 +25,32 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
    BGM ENGINE — generative dark-fantasy ambient (Web Audio)
    ========================================================= */
 const BGM = (() => {
-  let ctx = null, master, padBus, padFilter, wet, dry, comp, lfo, lfoGain;
+  let ctx = null, master, padBus, padFilter, wet, dry, comp, lfo, lfoGain, verb, dryOut, revIn, bus;
   let fileEl = null, mode = null;        // 'file' | 'synth'
   let playing = false, ducked = false, timer = null, nextTime = 0, bar = 0;
   let volume = parseFloat(store.get('bgmVol', '0.55'));
   const listeners = new Set();
-  const CH = 7.2; // seconds per chord
-  // D minor : i – VI – III – VII – i – iv – VI – V
-  const PROG = [
-    [38, [50, 57, 62, 65]], [34, [46, 53, 58, 62]], [41, [48, 53, 57, 60]], [36, [48, 55, 60, 64]],
-    [38, [50, 57, 62, 65]], [43, [50, 55, 58, 62]], [34, [46, 53, 58, 65]], [45, [49, 52, 57, 64]]
-  ];
-  const BELL = { 0:[74,77,81,86,84], 1:[74,77,82,86], 2:[77,81,84,88], 3:[76,79,84,86], 4:[74,77,81,86,89], 5:[74,79,82,86], 6:[77,82,86,89], 7:[76,81,85,88] };
+  /* ---- 트랙(프리셋) ----
+     prog: [베이스, [패드 음]] (MIDI) · ch: 코드당 초 · cutoff: 패드 밝기 · wave: 패드 파형
+     bells: 코드당 벨 개수 [최소,최대] · arp: 아르페지오 {step 초, oct 옥타브 이동, vol} · drum: 코드 내 킥 위치(0~1) */
+  const TRACKS = {
+    dawn: { name: '새벽의 성소', desc: '맑고 잔잔한', ch: 6.4, cutoff: 1500, wave: 'triangle', padVol: .03,
+      prog: [[38,[50,54,57,61]], [43,[55,59,62,66]], [47,[54,59,62,66]], [45,[52,57,61,64]]],
+      pool: [74,76,78,81,83,85,86,88], bells: [2,4], arp: { step: .4, oct: 12, vol: .045 }, drum: [] },
+    hearth: { name: '모닥불 마을', desc: '따뜻하고 포근한', ch: 5.6, cutoff: 1150, wave: 'triangle', padVol: .032,
+      prog: [[41,[53,57,60,64]], [40,[52,55,60,64]], [38,[50,53,57,62]], [34,[46,53,58,62]],
+             [41,[53,57,60,65]], [36,[48,52,55,62]], [34,[46,50,53,58]], [36,[48,55,60,64]]],
+      pool: [77,79,81,84,86,89], bells: [1,2], arp: { step: .35, oct: 0, vol: .05, pluck: true }, drum: [] },
+    journey: { name: '여정의 시작', desc: '경쾌하고 희망찬', ch: 4.4, cutoff: 1900, wave: 'sawtooth', padVol: .022,
+      prog: [[36,[48,52,55,60]], [43,[50,55,59,62]], [45,[52,57,60,64]], [41,[53,57,60,65]]],
+      pool: [72,74,76,79,81,84,86,88], bells: [1,3], arp: { step: .275, oct: 12, vol: .04, pluck: true }, drum: [0, .5] },
+    abyss: { name: '심연의 균열', desc: '어둡고 웅장한', ch: 7.2, cutoff: 820, wave: 'sawtooth', padVol: .034,
+      prog: [[38,[50,57,62,65]], [34,[46,53,58,62]], [41,[48,53,57,60]], [36,[48,55,60,64]],
+             [38,[50,57,62,65]], [43,[50,55,58,62]], [34,[46,53,58,65]], [45,[49,52,57,64]]],
+      pool: [74,77,81,84,86,89], bells: [2,4], arp: null, drum: [0], drumAlt: [.75] }
+  };
+  let trackId = TRACKS[store.get('bgmTrack', '')] ? store.get('bgmTrack') : 'dawn';
+  let P = TRACKS[trackId], CH = P.ch;
   const hz = m => 440 * Math.pow(2, (m - 69) / 12);
   const emit = () => listeners.forEach(f => f(playing));
 
@@ -55,30 +69,41 @@ const BGM = (() => {
     master = ctx.createGain(); master.gain.value = 0;
     comp = ctx.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 3;
     master.connect(comp).connect(ctx.destination);
-    const verb = ctx.createConvolver(); verb.buffer = impulse(5.5, 2.6);
+    verb = ctx.createConvolver(); verb.buffer = impulse(5.5, 2.6);
     wet = ctx.createGain(); wet.gain.value = .62;
-    dry = ctx.createGain(); dry.gain.value = .55;
-    verb.connect(wet).connect(master); dry.connect(master);
-    wet._in = verb;
-    padBus = ctx.createGain(); padBus.gain.value = 1;
-    padFilter = ctx.createBiquadFilter(); padFilter.type = 'lowpass'; padFilter.frequency.value = 820; padFilter.Q.value = .6;
-    padBus.connect(padFilter); padFilter.connect(dry); padFilter.connect(verb);
+    dryOut = ctx.createGain(); dryOut.gain.value = .55;
+    verb.connect(wet).connect(master); dryOut.connect(master);
     lfo = ctx.createOscillator(); lfo.frequency.value = .05;
     lfoGain = ctx.createGain(); lfoGain.gain.value = 360;
-    lfo.connect(lfoGain).connect(padFilter.frequency); lfo.start();
+    lfo.connect(lfoGain); lfo.start();
+    bus = makeBus();
     return true;
   }
+  // 트랙마다 별도 출력 버스: 트랙 전환 시 이전 버스만 서서히 줄이고 새 버스로 시작
+  function makeBus(){
+    const fd = ctx.createGain(), fw = ctx.createGain();
+    fd.connect(dryOut); fw.connect(verb);
+    dry = ctx.createGain(); dry.connect(fd);
+    revIn = ctx.createGain(); revIn.connect(fw);
+    padBus = ctx.createGain();
+    padFilter = ctx.createBiquadFilter(); padFilter.type = 'lowpass'; padFilter.frequency.value = P.cutoff; padFilter.Q.value = .6;
+    padBus.connect(padFilter); padFilter.connect(dry); padFilter.connect(revIn);
+    try { lfoGain.disconnect(); } catch(e){}
+    lfoGain.connect(padFilter.frequency);
+    return { fd, fw };
+  }
   function pad(t, notes){
+    const v = P.padVol, att = Math.min(2.6, CH * .4);
     notes.forEach((m, i) => {
       const g = ctx.createGain();
       g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(.034, t + 2.6);
-      g.gain.setValueAtTime(.034, t + CH - .4);
+      g.gain.linearRampToValueAtTime(v, t + att);
+      g.gain.setValueAtTime(v, t + CH - .4);
       g.gain.linearRampToValueAtTime(0, t + CH + 3.2);
       g.connect(padBus);
       [-7, 7].forEach(det => {
         const o = ctx.createOscillator();
-        o.type = i === 0 ? 'triangle' : 'sawtooth';
+        o.type = i === 0 ? 'triangle' : P.wave;
         o.frequency.value = hz(m); o.detune.value = det + (Math.random() * 4 - 2);
         o.connect(g); o.start(t); o.stop(t + CH + 3.4);
       });
@@ -101,28 +126,61 @@ const BGM = (() => {
     g.gain.exponentialRampToValueAtTime(.0001, t + 3.4);
     o.connect(g); o2.connect(g2).connect(g);
     const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
-    if (pan){ pan.pan.value = Math.random() * 1.2 - .6; g.connect(pan); pan.connect(wet._in); pan.connect(dry); }
-    else { g.connect(wet._in); }
+    if (pan){ pan.pan.value = Math.random() * 1.2 - .6; g.connect(pan); pan.connect(revIn); pan.connect(dry); }
+    else { g.connect(revIn); }
     o.start(t); o2.start(t); o.stop(t + 3.5); o2.stop(t + 3.5);
   }
   function drum(t){
     const g = ctx.createGain(), o = ctx.createOscillator();
     o.type = 'sine'; o.frequency.setValueAtTime(92, t); o.frequency.exponentialRampToValueAtTime(42, t + .5);
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.22, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + 1.6);
-    o.connect(g); g.connect(dry); g.connect(wet._in);
+    o.connect(g); g.connect(dry); g.connect(revIn);
     o.start(t); o.stop(t + 1.7);
   }
+  // 손으로 튕기는 듯한 짧은 음 (아르페지오)
+  function pluck(t, m, v, soft){
+    const g = ctx.createGain(), o = ctx.createOscillator(), o2 = ctx.createOscillator(), g2 = ctx.createGain(), f = ctx.createBiquadFilter();
+    o.type = soft ? 'triangle' : 'sine'; o.frequency.value = hz(m);
+    o2.type = 'sine'; o2.frequency.value = hz(m) * 2; g2.gain.value = .25;
+    f.type = 'lowpass'; f.frequency.value = 3200;
+    const dec = soft ? 1.1 : 1.6;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .008); g.gain.exponentialRampToValueAtTime(.0001, t + dec);
+    o.connect(f); o2.connect(g2).connect(f); f.connect(g); g.connect(dry); g.connect(revIn);
+    o.start(t); o2.start(t); o.stop(t + dec + .05); o2.stop(t + dec + .05);
+  }
   function scheduleBar(t){
-    const i = bar % PROG.length, [b, notes] = PROG[i];
+    const prog = P.prog, i = bar % prog.length, [b, notes] = prog[i];
     pad(t, notes); bass(t, b);
-    if (i % 2 === 0) drum(t + .05);
-    if (i === 3 || i === 7) drum(t + CH * .75);
-    const pool = BELL[i], n = 2 + Math.floor(Math.random() * 3);
+    (P.drum || []).forEach(x => drum(t + .05 + x * CH));
+    if (P.drumAlt && (i === 3 || i === 7)) P.drumAlt.forEach(x => drum(t + x * CH));
+    if (P.arp){
+      // 코드 구성음을 위아래로 오가는 아르페지오
+      const a = P.arp, seq = [...notes, ...notes.slice(1, -1).reverse()].map(m => m + a.oct), steps = Math.floor(CH / a.step);
+      for (let k = 0; k < steps; k++){
+        if (Math.random() < .12) continue; // 가끔 쉬어서 기계적인 느낌을 줄임
+        pluck(t + k * a.step, seq[k % seq.length], a.vol * (k % 4 === 0 ? 1 : .7), a.pluck);
+      }
+    }
+    const [lo, hi] = P.bells, n = lo + Math.floor(Math.random() * (hi - lo + 1));
     for (let k = 0; k < n; k++){
-      const at = t + 1.2 + Math.random() * (CH - 1.8);
-      bell(at, pool[Math.floor(Math.random() * pool.length)], .05 + Math.random() * .035);
+      const at = t + .8 + Math.random() * (CH - 1.4);
+      bell(at, P.pool[Math.floor(Math.random() * P.pool.length)], .045 + Math.random() * .03);
     }
     bar++;
+  }
+  function setTrack(id){
+    if (!TRACKS[id] || id === trackId) return;
+    trackId = id; store.set('bgmTrack', id);
+    if (!ctx || mode !== 'synth'){ P = TRACKS[id]; CH = P.ch; emit(); return; }
+    // 이전 트랙 버스는 서서히 줄이고 정리, 새 트랙은 새 버스에서 바로 시작
+    const now = ctx.currentTime, old = bus;
+    [old.fd, old.fw].forEach(n => { n.gain.cancelScheduledValues(now); n.gain.setValueAtTime(n.gain.value, now); n.gain.linearRampToValueAtTime(0, now + 1.2); });
+    setTimeout(() => { try { old.fd.disconnect(); old.fw.disconnect(); } catch(e){} }, 6000);
+    P = TRACKS[id]; CH = P.ch; bar = 0;
+    bus = makeBus();
+    nextTime = ctx.currentTime + .3;
+    if (playing) tick();
+    emit();
   }
   function tick(){
     if (!playing || !ctx) return;
@@ -200,6 +258,9 @@ const BGM = (() => {
     setVolume(v){ volume = v; store.set('bgmVol', String(v)); apply(); },
     get volume(){ return volume; },
     duck(on){ ducked = on; apply(); },
+    setTrack,
+    get track(){ return trackId; },
+    tracks: Object.entries(TRACKS).map(([id, t]) => ({ id, name: t.name, desc: t.desc })),
     on(f){ listeners.add(f); }
   };
 })();
@@ -211,12 +272,28 @@ window.BGM = BGM;
 function initHeader(){
   const box = $('.bgm'); if (!box) return;
   const btn = $('.bgm-btn', box), rng = $('input[type=range]', box), lbl = $('.bgm-label', box);
+  const pick = $('.bgm-pick', box), pop = $('.bgm-pop', box), list = $('.bgm-list', box);
+  const curName = () => (BGM.tracks.find(t => t.id === BGM.track) || {}).name || 'BGM';
   const sync = on => {
     box.classList.toggle('on', on);
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     btn.title = on ? 'BGM 끄기' : 'BGM 켜기';
-    if (lbl) lbl.textContent = on ? 'BGM ON' : 'BGM OFF';
+    if (lbl) lbl.textContent = on ? curName() : 'BGM OFF';
+    if (list) $$('button', list).forEach(b => b.setAttribute('aria-checked', b.dataset.track === BGM.track ? 'true' : 'false'));
   };
+  if (list){
+    list.innerHTML = BGM.tracks.map(t => `<button role="menuitemradio" data-track="${t.id}"><b>${t.name}</b><span>${t.desc}</span></button>`).join('');
+    list.addEventListener('click', e => {
+      const b = e.target.closest('[data-track]'); if (!b) return;
+      BGM.setTrack(b.dataset.track);
+      if (!BGM.playing) BGM.play();
+      sync(BGM.playing);
+    });
+  }
+  const setOpen = o => { if (!pop) return; pop.hidden = !o; pick.setAttribute('aria-expanded', o ? 'true' : 'false'); };
+  if (pick) pick.addEventListener('click', e => { e.stopPropagation(); setOpen(pop.hidden); });
+  document.addEventListener('click', e => { if (pop && !pop.hidden && !e.target.closest('.bgm')) setOpen(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
   BGM.on(sync); sync(false);
   btn.addEventListener('click', () => BGM.toggle());
   if (rng){ rng.value = BGM.volume; rng.addEventListener('input', () => BGM.setVolume(parseFloat(rng.value))); }

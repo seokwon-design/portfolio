@@ -574,3 +574,28 @@ main.entering{animation:fade .5s ease}
 .see-slides{margin:18px 0 0}
 .see-slides a{display:inline-flex;gap:6px;font-size:14px;border:1px solid var(--line-2);border-radius:99px;padding:7px 16px;color:var(--gold-2)}
 .see-slides a:hover{border-color:var(--gold);color:#fff}
+
+/* BGM track picker */
+.bgm{position:relative}
+.bgm-pick{display:flex;align-items:center;gap:6px;background:none;border:1px solid transparent;border-radius:6px;padding:6px 8px;cursor:pointer;color:var(--text-3);font:inherit}
+.bgm-pick:hover,.bgm-pick[aria-expanded=true]{border-color:var(--line-2);color:var(--gold-2)}
+.bgm.on .bgm-label{color:var(--gold-2)}
+.bgm-pop{position:absolute;top:calc(100% + 12px);right:0;width:270px;background:rgba(20,17,14,.98);border:1px solid var(--line-2);border-radius:12px;
+  box-shadow:var(--shadow);padding:12px;z-index:20}
+.bgm-pop[hidden]{display:none}
+.bgm-pop-h{font-family:var(--f-display);font-size:11px;letter-spacing:.2em;color:var(--gold);padding:2px 6px 8px}
+.bgm-list{display:flex;flex-direction:column;gap:4px}
+.bgm-list button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;background:none;border:1px solid transparent;border-radius:8px;
+  padding:9px 12px 9px 30px;cursor:pointer;color:var(--text-2);font:inherit;position:relative}
+.bgm-list button:hover{background:rgba(201,164,106,.08);color:#fff}
+.bgm-list button b{font-weight:500;font-size:14px;color:inherit}
+.bgm-list button span{font-size:12px;color:var(--text-3)}
+.bgm-list button::before{content:"";position:absolute;left:11px;top:15px;width:8px;height:8px;border:1px solid var(--line-3);transform:rotate(45deg)}
+.bgm-list button[aria-checked=true]{border-color:var(--line-2);background:rgba(201,164,106,.08);color:#fff}
+.bgm-list button[aria-checked=true]::before{background:var(--gold);border-color:var(--gold);box-shadow:0 0 8px var(--gold)}
+.bgm-vol{display:flex;align-items:center;gap:10px;padding:12px 6px 4px;border-top:1px solid var(--line);margin-top:8px;font-size:12.5px;color:var(--text-3)}
+.bgm-vol input{flex:1;accent-color:var(--gold)}
+.bgm-note{font-size:11.5px;color:var(--text-3);margin:6px 6px 0}
+@media (max-width:980px){ .bgm-pick .bgm-label{display:none} .bgm .bgm-pick{display:flex} }
+@media (max-width:860px){ .bgm-pop{position:fixed;top:calc(var(--nav-h) + 8px);right:12px;left:auto;width:min(290px,calc(100vw - 24px))} }
+.bgm .bgm-pop input[type=range]{display:block;width:auto}
