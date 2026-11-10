@@ -95,7 +95,7 @@ LAYOUT = """<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{fonts}">
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/style.css?v=3">
 </head>
 <body data-page="{page}">
 {gate}{nav}
@@ -103,8 +103,8 @@ LAYOUT = """<!doctype html>
 {main}
 </main>
 {footer}
-<script src="assets/js/widgets.js"></script>
-<script src="assets/js/main.js"></script>
+<script src="assets/js/widgets.js?v=3"></script>
+<script src="assets/js/main.js?v=3"></script>
 </body>
 </html>
 """

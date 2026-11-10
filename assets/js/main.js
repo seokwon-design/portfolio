@@ -422,7 +422,10 @@ async function go(url, push = true){
     const res = await fetch(u.href, { credentials: 'same-origin' });
     if (!res.ok) throw new Error(res.status);
     const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
-    const nm = $('main', doc); if (!nm) throw new Error('no main');
+    const parsed = $('main', doc); if (!parsed) throw new Error('no main');
+    // importNode: media elements parsed in an inert DOMParser document never load
+    // (Chrome marks them MEDIA_ERR_SRC_NOT_SUPPORTED), so recreate them in this document.
+    const nm = document.importNode(parsed, true);
     const cur = $('main');
     $$('video', cur).forEach(v => v.pause());
     cur.classList.add('leaving'); await wait(230);
