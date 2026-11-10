@@ -393,6 +393,21 @@ function initPage(){
     pageCleanups.push(() => tio.disconnect());
   }
 
+  // video: loading state + fallback link when the browser can't play it
+  $$('video', main).forEach(v => {
+    if (v._init) return; v._init = true;
+    const fig = v.closest('figure') || v.parentElement;
+    const fail = () => {
+      if (fig.querySelector('.vfail')) return;
+      const src = v.currentSrc || v.getAttribute('src');
+      fig.insertAdjacentHTML('beforeend', `<p class="vfail">이 브라우저에서 영상을 재생하지 못했습니다. <a href="${src}" target="_blank" rel="noopener">새 탭에서 열기 ↗</a></p>`);
+    };
+    v.addEventListener('error', fail);
+    v.addEventListener('waiting', () => fig.classList.add('loading'));
+    ['playing', 'pause', 'canplay'].forEach(ev => v.addEventListener(ev, () => fig.classList.remove('loading')));
+    if (v.error) fail();
+  });
+
   // widgets
   if (window.Widgets) $$('[data-widget]', main).forEach(w => { const f = window.Widgets[w.dataset.widget]; if (f && !w._init){ w._init = true; f(w); } });
 }
