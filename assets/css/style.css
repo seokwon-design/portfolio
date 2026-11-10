@@ -599,3 +599,19 @@ main.entering{animation:fade .5s ease}
 @media (max-width:980px){ .bgm-pick .bgm-label{display:none} .bgm .bgm-pick{display:flex} }
 @media (max-width:860px){ .bgm-pop{position:fixed;top:calc(var(--nav-h) + 8px);right:12px;left:auto;width:min(290px,calc(100vw - 24px))} }
 .bgm .bgm-pop input[type=range]{display:block;width:auto}
+.bgm-pop::before{content:"";position:absolute;left:0;right:0;top:-14px;height:14px}
+
+/* BGM list groups + scroll */
+.bgm-list{max-height:min(420px,60vh);overflow-y:auto}
+.bgm-grp{font-size:11px;letter-spacing:.08em;color:var(--text-3);padding:8px 8px 4px;border-top:1px solid var(--line);margin-top:4px}
+.bgm-grp:first-child{border-top:0;margin-top:0;padding-top:2px}
+.sub>.m-only{display:none}
+/* mobile: submenus collapse; tap the parent to open */
+@media (max-width:860px){
+  .nav-item.has-sub>.sub{display:none}
+  .nav-item.has-sub.open>.sub{display:flex}
+  .nav-item.has-sub>a.top::before{display:block!important;order:2;margin-left:auto;transform:translateY(-2px) rotate(45deg)}
+  .nav-item.has-sub.open>a.top::before{transform:translateY(2px) rotate(-135deg)}
+  .nav-item.has-sub>a.top{justify-content:space-between}
+  .sub>.m-only{display:block;color:var(--gold-2)}
+}

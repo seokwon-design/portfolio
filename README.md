@@ -21,11 +21,14 @@ assets/img, video, files
 ```
 
 ## BGM
-- 기본: 브라우저가 실시간으로 만드는 앰비언트 (저작권 문제 없음). 상단 BGM 버튼 옆 ▾ 에서 4곡 중 선택
-  - 새벽의 성소(기본, 맑고 잔잔한) · 모닥불 마을(따뜻한) · 여정의 시작(경쾌한) · 심연의 균열(어두운)
+- 기본: 브라우저가 실시간으로 만드는 앰비언트 (저작권 문제 없음). 상단 BGM 버튼 옆 ▾ 에서 선택
+  - 잔잔한 새벽(기본) · 고요한 밤 · 따뜻한 오후 — 모두 잔잔한 배경용
   - 곡 구성은 `assets/js/main.js`의 `TRACKS`에서 코드 진행·속도·밝기를 바꿀 수 있습니다.
-- 원하는 음악으로 바꾸기: `assets/audio/bgm.mp3` 파일을 넣으면 자동으로 그 파일을 반복 재생합니다.
-  (파일이 없을 때 콘솔에 404가 한 줄 찍히는 건 정상입니다.)
+- 게임 BGM(CC0, OpenGameArt.org): `assets/audio/*.m4a`, 목록은 `main.js`의 `FILE_TRACKS`
+  - Juhani Junkala — JRPG Pack 4 Calm (Peaceful Days · A Place I Call Home · Innocence)
+  - cynicmusic (pixelsphere.org) — Town Theme RPG · A New Town · Another August
+  - Yoiyami — Core Theme (Deep Blue Ambient Piano)
+  - 곡 추가: m4a/mp3 파일을 `assets/audio/`에 넣고 `FILE_TRACKS`에 한 줄 추가
 - 영상을 소리 켜고 재생하면 BGM 볼륨이 자동으로 줄어듭니다. `M` 키로 켜기/끄기.
 
 ## 배포
