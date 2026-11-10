@@ -1,0 +1,120 @@
+<!--meta {"game":"dd","short":"에테르 코어","title":"에테르 코어","one":"액세서리의 슬롯에 에테르 코어를 장착해 부위별 효과와 추가 성장을 제공하는 시스템 — 획득과 장착, 두 단계의 성장","cover":"assets/img/ether/03.webp","desc":"다크디셈버 에테르 코어 — 슬롯 수 결정과 코어 장착의 2단계 성장, 부위별 효과, 장착 리스크, 데이터 구조","meta":[["GAME","다크디셈버 · 개발~글로벌 런칭"],["ROLE","시스템 메인 기획"],["TARGET","목걸이 · 반지 · 벨트"]],"contrib":[["시스템 기획",100],["데이터 테이블 설계",100],["UI/UX 정책 설계",100],["성장 밸런스",100]]} -->
+<section class="chapter" id="task" data-toc="설계 과제">
+  <span class="eyebrow">01 · Design Goal</span>
+  <h2>같은 장비에도, 다른 가치를</h2>
+  <p class="lede">장비 획득 시 정해지는 슬롯 수와, 순서대로 채워 가는 코어 장착을 서로 다른 성장 단계로 나눴습니다. 뒤 슬롯일수록 기존 코어를 잃을 위험을 더해 도전의 무게를 조절했습니다.</p>
+  <div class="grid g3">
+    <div class="panel corner"><span class="num">01</span><h3>다양성과 희소성</h3><p class="muted">슬롯 수가 랜덤으로 생성되어 같은 장비라도 가치가 달라지고, 거래·경매장의 밸류 체인이 생깁니다.</p></div>
+    <div class="panel corner"><span class="num">02</span><h3>고위험 고보상</h3><p class="muted">단순 강화와 다른 긴장감 — 장착 실패 시 기존 코어가 파괴될 수 있습니다.</p></div>
+    <div class="panel corner"><span class="num">03</span><h3>빌드 다양화</h3><p class="muted">코어 색과 장착 부위의 조합으로 자신만의 스탯 세팅을 구성합니다.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="slot" data-toc="슬롯과 성장 구조">
+  <span class="eyebrow">02 · Two-Step Growth</span>
+  <h2>획득과 장착, 두 단계</h2>
+  <p class="lede">획득 시 정해지는 슬롯 수는 <strong>성장 여지</strong>를 만들고, 코어 장착은 그 여지를 <strong>채워 가는 과정</strong>입니다.</p>
+  <div class="split">
+    <div class="steps" style="--n:1;margin:0">
+      <div class="step"><h4>장비 획득 — 성장 여지 결정</h4><p>목걸이·반지·벨트에 장비 조건과 슬롯 정책을 적용합니다. 생성된 슬롯 수가 이후 장착 가능한 코어 수의 상한이 됩니다.</p></div>
+      <div class="step"><h4>코어 장착 — 효과 누적</h4><p>왼쪽 첫 슬롯부터 순서대로 장착합니다. 슬롯을 건너뛰거나 장착 순서를 바꿀 수 없습니다.</p></div>
+    </div>
+    <div>
+      <div class="tbl-wrap" style="margin-top:0"><table class="tbl" style="min-width:0">
+        <thead><tr><th>장비 조건</th><th class="c">1개</th><th class="c">2개</th><th class="c">3개</th><th class="c">4개</th><th class="c">5개</th></tr></thead>
+        <tbody><tr><td>6티어 이상</td><td class="c">31%</td><td class="c">31%</td><td class="c">22%</td><td class="c">11%</td><td class="c">5%</td></tr></tbody></table></div>
+      <p class="muted" style="font-size:13px">현재 슬롯 정책 예시 — EtherCoreSlotKey 11001</p>
+      <div class="prose"><p><code>ItemEquip</code>에는 장착 가능한 코어 슬롯 타입과 최대 슬롯 수를, <code>EtherCoreSlot</code>에는 슬롯 타입별 장착 가능 코어와 슬롯 생성 확률을 둡니다. 같은 정책을 여러 장비에 적용하고, 정책 변경과 개별 장비 설정을 나누어 관리합니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="part" data-toc="부위별 효과">
+  <span class="eyebrow">03 · Per-Part Effects</span>
+  <h2>하나의 코어를 세 부위에 활용</h2>
+  <p class="lede">코어를 부위별 별도 아이템으로 나누지 않고, 장착 부위에 해당하는 효과 하나를 적용하도록 구성했습니다. 코어 타입·등급으로 효과 행을 조회하고, 장비 부위와 일치하는 <code>EquipAttribute</code>의 옵션만 적용합니다.</p>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>희귀 코어 예시</th><th>목걸이 · Amulet</th><th>반지 · Ring</th><th>벨트 · Belt</th></tr></thead>
+    <tbody>
+      <tr><td><span style="color:#e2604f">◆</span> 레드 코어</td><td>공격 시 피해 +12%</td><td>공격 치명도 +15%</td><td>마나 물약 효과 +6%</td></tr>
+      <tr><td><span style="color:#5d93e6">◆</span> 블루 코어</td><td>주문 시 피해 +12%</td><td>주문 치명도 +15%</td><td>생명력 물약 효과 +6%</td></tr>
+      <tr><td><span style="color:#e7c45c">◆</span> 옐로우 코어</td><td>치명타 피해 +12%</td><td>골드 획득량 +3%</td><td>능력치 +6</td></tr>
+      <tr><td><span style="color:#6cc58c">◆</span> 그린 코어</td><td>정예에게 피해 +18%</td><td>처치 경험치 +3%</td><td>적중도 +240</td></tr>
+    </tbody></table></div>
+  <div class="grid g2">
+    <div class="panel corner"><h3>아이템 종류와 학습 부담</h3><p class="muted">4색 × 4등급의 코어를 공통으로 활용해, 부위별 아이템 종류가 늘어나는 것을 방지했습니다.</p></div>
+    <div class="panel corner"><h3>고정 수치와 중첩 보관</h3><p class="muted">동일 코어의 수치를 고정하고 중첩 보관하도록 설계해, 다량 획득 시 인벤토리 부담을 완화했습니다.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="risk" data-toc="장착 리스크">
+  <span class="eyebrow">04 · Risk</span>
+  <h2>실패와 기존 코어 파괴를 분리</h2>
+  <p class="lede">실패하면 시도한 코어가 소멸하며, 별도 파괴 판정에 따라 기존 코어 일부 또는 전부가 제거될 수 있습니다. 초반에는 파괴 없이 성장을 시작하고, 후반에는 누적한 코어를 잃을 위험까지 고려하도록 구성했습니다.</p>
+  <div class="split">
+    <div class="tbl-wrap" style="margin:0"><table class="tbl" style="min-width:0">
+      <thead><tr><th>장착 순번</th><th class="c">성공</th><th class="c">일반 실패</th><th class="c">기존 코어 파괴</th></tr></thead>
+      <tbody>
+        <tr><td>1번째</td><td class="c">100%</td><td class="c">0%</td><td class="c">0%</td></tr>
+        <tr><td>2번째</td><td class="c">80%</td><td class="c">20%</td><td class="c">0%</td></tr>
+        <tr><td>3번째</td><td class="c">50%</td><td class="c">35%</td><td class="c">15%</td></tr>
+        <tr><td>4번째</td><td class="c">30%</td><td class="c">42%</td><td class="c">28%</td></tr>
+        <tr><td>5번째</td><td class="c">20%</td><td class="c">40%</td><td class="c">40%</td></tr>
+      </tbody></table></div>
+    <div class="prose"><ul>
+      <li><b>장착 성공</b> — 시도한 코어가 다음 슬롯에 장착되고 효과 적용</li>
+      <li><b>장착 실패 → 파괴 여부 판정</b> — 시도한 코어 소멸 → <code>GemRmvRateSlot</code> 판정. 일반 실패면 기존 코어 유지</li>
+      <li><b>파괴 수량 결정 → 장착 역순 제거</b> — 기존 코어가 4개라면 1·2·3·4개 파괴가 각각 25%. 결정된 수량만큼 마지막에 장착한 코어부터 제거 (예: 2개 파괴 → 4번·3번)</li>
+      <li><b>확률의 기준을 구분</b> — 5번째 실패 확률 80% × 실패 후 파괴 확률 50% = 한 번의 시도에서 기존 코어 파괴 발생 확률 40%</li>
+    </ul></div>
+  </div>
+  <div class="widget" data-widget="etherSim"></div>
+</section>
+
+<section class="chapter" id="data" data-toc="데이터 구조">
+  <span class="eyebrow">05 · Data</span>
+  <h2>설정 단위와 조회 조건의 구분</h2>
+  <p class="lede">장비 조건, 슬롯 정책, 코어 정보, 스탯 결과를 분리해 신규 코어·액세서리 추가와 확률·스탯 조정을 독립적으로 처리할 수 있도록 설계했습니다.</p>
+  <div class="flow">
+    <div><b>ItemEquip</b>장비 Key · EquipAttribute · Tier · EtherCoreSlotType · 최대 슬롯 수</div>
+    <div><b>EtherCoreSlot</b>LimitEquipTier · EquipCore1~7 · EtherSlotRate · InsertRateSlot · GemRmvRateSlot</div>
+    <div><b>ItemEtherCore</b>코어 Key · 코어 타입 · 등급</div>
+    <div><b>EtherCoreStat</b>타입 + 등급 → 한 행에 세 부위 효과 정의</div>
+  </div>
+  <figure><img src="assets/img/slides/p46.webp" alt="에테르 코어 데이터 구조" loading="lazy"><figcaption>데이터 구조 — 타입 매칭과 조건 조회로 적용 데이터를 결정</figcaption></figure>
+</section>
+
+<section class="chapter" id="ui" data-toc="실제 장착 화면">
+  <span class="eyebrow">06 · UI / UX</span>
+  <h2>효과와 위험을 확인한 뒤 실행</h2>
+  <p class="lede">대상 장비, 부위별 코어 효과, 결과 확률을 한 화면에서 확인하고 장착으로 이어지도록 구성했습니다.</p>
+  <div class="split wide-l">
+    <figure><img src="assets/img/ether/04.webp" alt="에테르 코어 장착 화면" loading="lazy"><figcaption>장착 화면 — 대상 장비·슬롯 / 코어 / 부위별 효과 / 결과 확률 / 실행</figcaption></figure>
+    <div class="prose"><ul>
+      <li><b>① 대상 장비와 슬롯</b> — 장비와 현재 슬롯 상태 확인</li>
+      <li><b>② 장착할 코어</b> — 타입·등급·보유 수량 확인. 코어 등록 시 인벤토리를 자동으로 숨겨 장착 정보에 집중</li>
+      <li><b>③ 부위별 발현 효과</b> — 세 부위의 효과를 함께 안내하고 현재 장비에 적용될 효과 강조</li>
+      <li><b>④ 결과 확률</b> — 성공·일반 실패·파괴를 구분해 시도 위험 안내</li>
+      <li><b>⑤ 장착 실행</b> — 파괴 위험이 있는 단계에서는 기존 코어 일부 또는 전부가 파괴될 수 있음을 팝업으로 안내</li>
+    </ul></div>
+  </div>
+  <div class="fig-grid" style="--c:3" data-gallery>
+    <figure><img src="assets/img/ether/01.webp" alt="" loading="lazy"><figcaption>슬롯 수가 표시된 액세서리 툴팁</figcaption></figure>
+    <figure><img src="assets/img/ether/02.webp" alt="" loading="lazy"><figcaption>코어 장착 후 툴팁</figcaption></figure>
+    <figure><img src="assets/img/ether/03.webp" alt="" loading="lazy"><figcaption>장착 씬</figcaption></figure>
+    <figure><img src="assets/img/ether/05.webp" alt="" loading="lazy"><figcaption>코어 등록 — 인벤토리 자동 숨김</figcaption></figure>
+    <figure><img src="assets/img/ether/06.webp" alt="" loading="lazy"><figcaption>장착 결과</figcaption></figure>
+  </div>
+  <figure class="vid"><video src="assets/video/ether.mp4" poster="assets/video/ether.jpg" controls preload="none" playsinline></video><figcaption>실제 플레이 — 코어 장착 흐름</figcaption></figure>
+</section>
+
+<section class="chapter" id="slides" data-toc="원본 슬라이드">
+  <span class="eyebrow">Appendix</span>
+  <h2>포트폴리오 원본 슬라이드</h2>
+  <div class="slides" data-gallery><div class="strip">
+    <button data-cap="슬롯과 성장 구조 — 획득과 장착의 두 단계"><img src="assets/img/slides/p43.webp" alt="" loading="lazy"></button>
+    <button data-cap="장착 리스크 — 실패와 기존 코어 파괴를 분리"><img src="assets/img/slides/p45.webp" alt="" loading="lazy"></button>
+    <button data-cap="데이터 구조 — 설정 단위와 조회 조건의 구분"><img src="assets/img/slides/p46.webp" alt="" loading="lazy"></button>
+    <button data-cap="실제 장착 화면 — 효과와 위험을 확인한 뒤 실행"><img src="assets/img/slides/p47.webp" alt="" loading="lazy"></button>
+  </div><div class="strip-note">클릭하면 크게 볼 수 있습니다.</div></div>
+</section>

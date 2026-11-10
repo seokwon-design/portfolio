@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>차원 균열: 벨레스 · 정석원 | 시스템·콘텐츠 기획자 포트폴리오</title>
+<meta name="description" content="다크디셈버 차원 균열: 벨레스 — 파티 방어 웨이브 설계, 위험·보상 기운 선택과 투표 정책, 보상 교환 UX, 데이터 구조, 보스 스킬 데이터·몽타주">
+<meta property="og:type" content="website">
+<meta property="og:title" content="차원 균열: 벨레스 · 정석원 | 시스템·콘텐츠 기획자 포트폴리오">
+<meta property="og:description" content="다크디셈버 차원 균열: 벨레스 — 파티 방어 웨이브 설계, 위험·보상 기운 선택과 투표 정책, 보상 교환 UX, 데이터 구조, 보스 스킬 데이터·몽타주">
+<meta property="og:image" content="assets/img/beles/06.webp">
+<meta name="theme-color" content="#0c0a09">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="projects">
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#c9a46a" stroke-width="1.6">
+<circle cx="32" cy="32" r="28" opacity=".55"/><circle cx="32" cy="32" r="20"/><path d="M32 6 L54 44 H10 Z" opacity=".8"/>
+<path d="M32 58 L10 20 H54 Z" opacity=".35"/></g><circle cx="32" cy="32" r="3.2" fill="#e9cd93"/></svg><span><b>JEONG SEOKWON</b><em> · Portfolio</em></span></a>
+    <nav class="nav-links" aria-label="주요 메뉴">
+      <a href="index.html#about" data-nav="about">About</a>
+      <a href="index.html#career" data-nav="career">Career</a>
+      <a href="index.html#projects" data-nav="projects">Projects</a>
+      <a href="index.html#works" data-nav="works">Other Works</a>
+      <a href="index.html#contact" data-nav="contact">Contact</a>
+    </nav>
+    <div class="bgm">
+      <span class="bgm-label">BGM OFF</span>
+      <input type="range" min="0" max="1" step="0.01" aria-label="BGM 볼륨">
+      <button class="bgm-btn" aria-pressed="false" title="BGM 켜기"><span class="eq"><i></i><i></i><i></i><i></i></span></button>
+    </div>
+    <button class="menu-btn" aria-label="메뉴"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  </div>
+</header>
+<main>
+
+<section class="p-hero">
+  <div class="bg" style="background-image:url('assets/img/beles/06.webp')"></div>
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html#projects">Projects</a><span>/</span><span class="tag dd">DARK DECEMBER · 다크디셈버</span></div>
+    <h1>차원 균열: 벨레스</h1>
+    <p class="one">1~4인이 봉인석을 방어한 뒤 마지막 웨이브에서 보스 벨레스를 처치하는 콘텐츠 — 웨이브 사이에는 전투 조건과 정수 획득량을 바꾸는 '기운'을 선택합니다</p>
+    <div class="meta"><div><span>GAME</span><b>다크디셈버 · 개발~글로벌 런칭</b></div><div><span>ROLE</span><b>시스템·콘텐츠 메인 · 보스 서브</b></div><div><span>BOSS</span><b>스킬 2종 데이터 · 몽타주 세팅</b></div><div><span>CONTRIBUTION</span><div class="contrib"><div class="bar"><span>시스템 기획</span><span>100%</span><i style="--v:100%"></i></div><div class="bar"><span>데이터 테이블 설계</span><span>100%</span><i style="--v:100%"></i></div><div class="bar"><span>UI/UX 정책 설계</span><span>100%</span><i style="--v:100%"></i></div></div></div></div>
+  </div>
+</section>
+<div class="p-body">
+  <div class="wrap p-layout">
+    <aside class="toc"><b>CONTENTS</b><a href="#task">설계 과제</a><a href="#roles">침입 · 역할 분담</a><a href="#choice">기운 선택 · 투표</a><a href="#reward">보상 교환</a><a href="#data">데이터 구조</a><a href="#boss">보스 · 몽타주</a><a href="#slides">원본 슬라이드</a></aside>
+    <div class="p-content">
+<section class="chapter" id="task" data-toc="설계 과제">
+  <span class="eyebrow">01 · Design Goal</span>
+  <h2>지키고, 고르고, 끝낸다</h2>
+  <p class="lede">세 방향의 침입에 대응하는 역할 분담, 전투 부담과 보상을 비교하는 기운 선택, 파티의 의사결정을 마무리하는 시간 제한을 하나의 진행으로 연결했습니다.</p>
+  <div class="flow">
+    <div><b>1~4 웨이브</b>봉인석 방어 · 전체 처치</div>
+    <div><b>웨이브 사이</b>기운 선택 · 파티 투표</div>
+    <div><b>5 웨이브</b>벨레스 처치</div>
+    <div><b>보상 교환</b>모은 정수로 보상 선택</div>
+  </div>
+  <div class="fig-grid" style="--c:3" data-gallery>
+    <figure><img src="assets/img/beles/01.webp" alt="" loading="lazy"><figcaption>입장 화면</figcaption></figure>
+    <figure><img src="assets/img/beles/02.webp" alt="" loading="lazy"><figcaption>파티가 함께 지켜야 할 봉인석</figcaption></figure>
+    <figure><img src="assets/img/beles/03.webp" alt="" loading="lazy"><figcaption>봉인석 방어 웨이브</figcaption></figure>
+  </div>
+</section>
+
+<section class="chapter" id="roles" data-toc="침입 · 역할 분담">
+  <span class="eyebrow">02 · Party Roles</span>
+  <h2>세 방향의 침입, 네 명의 대응 역할</h2>
+  <p class="lede">일반 웨이브는 공동의 방어 대상을 지키고, 마지막 웨이브는 벨레스 처치로 목표를 전환합니다.</p>
+  <div class="steps" style="--n:3">
+    <div class="step"><h4>파티가 함께 지켜야 할 봉인석</h4><p>봉인석이 파괴되면 도전이 종료됩니다. 개인의 생존뿐 아니라 공통 목표의 방어가 필요합니다.</p></div>
+    <div class="step"><h4>세 방향의 침입과 역할 분담</h4><p>4인 파티에서는 각 방향을 맡은 인원 외에 한 명이 압박이 큰 방향을 지원할 여지를 두었습니다.</p></div>
+    <div class="step"><h4>현재 상황을 읽는 HUD</h4><p>웨이브 진행과 봉인석 체력을 함께 표시해, 남은 진행과 방어 상태를 확인하도록 했습니다.</p></div>
+  </div>
+  <div class="callout"><b>설계 의도</b><p>1~4 웨이브 '전체 처치'에서 5 웨이브 '지정 보스 처치'로 완료 조건을 바꿔, 위치를 지키는 역할과 전황에 따라 이동하는 지원 역할이 함께 생기도록 유도했습니다.</p></div>
+  <div class="split">
+    <figure><img src="assets/img/beles/04.webp" alt="" loading="lazy"><figcaption>세 방향에서 침입하는 몬스터</figcaption></figure>
+    <figure><img src="assets/img/beles/07.webp" alt="" loading="lazy"><figcaption>5 웨이브 — 벨레스 처치</figcaption></figure>
+  </div>
+</section>
+
+<section class="chapter" id="choice" data-toc="기운 선택 · 투표">
+  <span class="eyebrow">03 · Risk &amp; Reward</span>
+  <h2>보상만 고르지 않고, 감당할 전투 조건까지</h2>
+  <p class="lede">기운 후보를 슬롯별로 추첨하고, 전투 부담과 정수 증가량을 함께 제시해 현재 파티에 맞는 선택을 유도했습니다. 정수 증가량이 높더라도 파티에 불리한 조건일 수 있습니다.</p>
+  <div class="split">
+    <div class="tbl-wrap" style="margin:0"><table class="tbl" style="min-width:0">
+      <thead><tr><th>단계</th><th class="c">몬스터 피해 증가</th><th class="c">정수 획득 증가</th></tr></thead>
+      <tbody>
+        <tr><td>Ⅰ</td><td class="c">+5%</td><td class="c">+0%</td></tr>
+        <tr><td>Ⅱ</td><td class="c">+10%</td><td class="c">+20%</td></tr>
+        <tr><td>Ⅲ</td><td class="c">+20%</td><td class="c hl">+40%</td></tr>
+      </tbody></table>
+      <p class="muted" style="font-size:12.5px;padding:8px 16px;margin:0">동일 계열의 단계별 수치 예시 · 항상 함께 등장하지는 않습니다.</p></div>
+    <figure style="margin:0"><img src="assets/img/beles/05.webp" alt="기운 선택 팝업" loading="lazy"><figcaption>기운 선택 — ① 정수 증가량 ② 전투 조건 변화 ③ 투표 ④ 제한 시간</figcaption></figure>
+  </div>
+  <h3>결정 정책 — 의견 수렴과 진행 보장</h3>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>상황</th><th>처리</th></tr></thead>
+    <tbody>
+      <tr><td>평상시</td><td>파티원은 투표, 파티장은 최종 선택을 담당</td></tr>
+      <tr><td>시간 초과</td><td>최다 득표 후보를 적용</td></tr>
+      <tr><td>동률</td><td>동률인 후보 중 무작위로 확정</td></tr>
+      <tr><td>무투표</td><td>세 후보 중 무작위로 확정</td></tr>
+    </tbody></table></div>
+  <div class="callout"><b>왜 이렇게</b><p>파티장이 결정권을 갖되 파티원의 의견이 드러나도록 하고, 누구도 고르지 않아도 콘텐츠가 멈추지 않도록 모든 분기에서 진행을 보장했습니다.</p></div>
+</section>
+
+<section class="chapter" id="reward" data-toc="보상 교환">
+  <span class="eyebrow">04 · Reward Exchange</span>
+  <h2>선택 조정과 지급 확정을 구분</h2>
+  <p class="lede">모은 정수 안에서 보상 종류와 수량을 조정하고, 확정 버튼으로 지급을 요청합니다. 종료 전에는 정수 소멸을 안내합니다.</p>
+  <div class="split wide-r">
+    <div class="steps" style="--n:1;margin:0">
+      <div class="step"><h4>보상 비교</h4><p>요구 정수를 보상과 함께 표시해 원하는 보상의 비용을 비교</p></div>
+      <div class="step"><h4>보유량 안에서 수량 조정</h4><p>정수 초과 선택은 제한하고, 수량을 바꾸며 교환 조합을 조정</p></div>
+      <div class="step"><h4>잔여량으로 확인</h4><p>수량 변경에 따라 남은 정수를 갱신해 추가 교환 가능 여부 확인</p></div>
+      <div class="step"><h4>선택 후 지급 확정</h4><p>한 개 이상 선택해야 '보상 받기' 활성화 — 빈 선택의 확정 방지</p></div>
+      <div class="step"><h4>소멸을 확인하고 종료</h4><p>닫기 시 미사용 정수의 소멸을 안내해, 더 고를지 종료할지 판단</p></div>
+    </div>
+    <div>
+      <figure style="margin-top:0"><img src="assets/img/beles/08.webp" alt="보상 교환 화면" loading="lazy"><figcaption>보상 교환 — 요구 정수와 잔여량</figcaption></figure>
+      <figure><img src="assets/img/beles/09.webp" alt="보상 선택 후" loading="lazy"><figcaption>수량 조정과 지급 확정</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="data" data-toc="데이터 구조">
+  <span class="eyebrow">05 · Data</span>
+  <h2>난이도 · 웨이브 · 선택 · 보상</h2>
+  <p class="lede">난이도 설정(<code>CoContentConfig</code>) 아래 웨이브·기운 후보·보상을 분리하고, 진행 조건과 효과 유지 범위를 각각 데이터로 정의했습니다.</p>
+  <div class="grid g3">
+    <div class="panel corner"><span class="num">DIMENSIONDEFENCEWAVE</span><h3>진행 조건</h3><p class="muted"><code>GoalType</code> / <code>GoalArg</code>로 일반 몬스터 전체 처치와 지정 보스 처치를 구분</p></div>
+    <div class="panel corner"><span class="num">DIMENSIONDEFENCEBUFFCHOICE</span><h3>효과 대상 · 유지 범위</h3><p class="muted">같은 ConfigKey + Step에서 Slot별 후보를 <code>SelectRatio</code>로 추첨. <code>TargetType1</code>로 대상, <code>IsPerWaveReset1</code>로 웨이브 종료 시 초기화 여부 결정 — 웨이브 Key를 직접 참조하지 않음</p></div>
+    <div class="panel corner"><span class="num">DIMENSIONDEFENCEREWARD</span><h3>교환 비용 · 지급</h3><p class="muted"><code>RequirePoint</code> / <code>ItemKey</code>로 교환 비용과 지급 아이템을 연결</p></div>
+  </div>
+  <figure><img src="assets/img/slides/p52.webp" alt="벨레스 데이터 구조" loading="lazy"><figcaption>데이터 구조 — 난이도 · 웨이브 · 선택 · 보상</figcaption></figure>
+</section>
+
+<section class="chapter" id="boss" data-toc="보스 · 몽타주">
+  <span class="eyebrow">06 · Boss</span>
+  <h2>보스 컨셉 요건과 스킬 몽타주 세팅</h2>
+  <p class="lede">레이드 보스가 아니라 웨이브 디펜스의 마지막을 장식하는 보스이므로, 패턴 강도는 낮추고 외형에서 직관적인 위압감이 느껴지도록 컨셉 요건을 정리했습니다.</p>
+  <div class="split">
+    <div class="prose"><ul>
+      <li><b>배경과 어우러지는 보스</b> — 등장 스테이지의 배경과 조화되는 외형</li>
+      <li><b>기믹보다 '육신의 위압감'</b> — 패턴 수가 적은 만큼 복잡한 콘셉트 없이 직관적으로 강해 보이는 디자인</li>
+      <li><b>크기 약 10m</b> — 2m 캐릭터 대비 압도감을 주는 스케일</li>
+      <li><b>스킬 2종</b> — 스킬 데이터 작성과 UE4 애니메이션 몽타주 세팅을 직접 진행</li>
+    </ul></div>
+    <div class="fig-grid" style="--c:1" data-gallery>
+      <figure><img src="assets/img/beles/10.webp" alt="" loading="lazy"><figcaption>UE4 — 보스 리소스 확인</figcaption></figure>
+      <figure><img src="assets/img/beles/11.webp" alt="" loading="lazy"><figcaption>UE4 — 스킬 몽타주 세팅</figcaption></figure>
+    </div>
+  </div>
+  <figure><img src="assets/img/beles/06.webp" alt="" loading="lazy"><figcaption>벨레스 등장</figcaption></figure>
+</section>
+
+<section class="chapter" id="slides" data-toc="원본 슬라이드">
+  <span class="eyebrow">Appendix</span>
+  <h2>포트폴리오 원본 슬라이드</h2>
+  <div class="slides" data-gallery><div class="strip">
+    <button data-cap="세 방향의 침입, 네 명의 대응 역할"><img src="assets/img/slides/p49.webp" alt="" loading="lazy"></button>
+    <button data-cap="보상만 고르지 않고, 감당할 전투 조건까지 비교"><img src="assets/img/slides/p50.webp" alt="" loading="lazy"></button>
+    <button data-cap="선택 조정과 지급 확정을 구분한 보상 교환"><img src="assets/img/slides/p51.webp" alt="" loading="lazy"></button>
+    <button data-cap="데이터 구조 — 난이도 · 웨이브 · 선택 · 보상"><img src="assets/img/slides/p52.webp" alt="" loading="lazy"></button>
+  </div><div class="strip-note">클릭하면 크게 볼 수 있습니다.</div></div>
+</section>
+
+<div class="p-next"><a href="p-gacha.html"><span>← PREV</span><b>가챠 상자 · 이달의 상자</b></a><a class="nx" href="index.html#works"><span>NEXT →</span><b>기타 작업 보기</b></a></div>
+    </div>
+  </div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 정석원 · System &amp; Content Designer · zaqkoko@naver.com</div>
+    <div class="bgm-credit">게임 화면과 리소스의 저작권은 니즈게임즈에 있으며 포트폴리오 목적으로만 사용했습니다. BGM은 Web Audio로 실시간 생성됩니다.</div>
+  </div>
+</footer>
+<script src="assets/js/widgets.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

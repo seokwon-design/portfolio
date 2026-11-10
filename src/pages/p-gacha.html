@@ -1,0 +1,106 @@
+<!--meta {"game":"dd","short":"가챠 상자 · 이달의 상자","title":"가챠 상자 · 이달의 상자","one":"결과 확인만 하던 상자를 BM 전용 상자로 — 소단위 개봉과 짧은 획득 연출로 기대감이 쌓이는 구조","cover":"assets/img/gacha/02.webp","desc":"다크디셈버 가챠 상자(이달의 상자) — BM 전용 상자 설계, 소단위 개봉과 연출 분기, 버튼 노출 규칙, 확성기, 인벤토리 체크 로직 개선, BI 로그","meta":[["GAME","다크디셈버 · 개발~글로벌 런칭"],["ROLE","시스템 메인 기획"],["SCOPE","씬 · 연출 분기 · 확률 팝업 · BI 로그"],["EXTRA","상자 인벤토리 체크 로직 개선"]]} -->
+<section class="chapter" id="why" data-toc="기획 의도">
+  <span class="eyebrow">01 · Why</span>
+  <h2>결과만 확인하는 상자의 한계</h2>
+  <p class="lede">기존 상자는 유저가 입력한 개수만큼 일괄 개봉하고 결과만 보여주는 구조였습니다. 별도의 연출이 없었습니다.</p>
+  <div class="flow old">
+    <div><b>결과 확인 기능만 존재</b></div><div><b>과금 경험 가치 하락</b></div><div><b>획득 몰입감 부족</b></div><div><b>BM 기대감 저하 · 체류 시간 단축</b></div>
+  </div>
+  <div class="steps" style="--n:3">
+    <div class="step"><h4>소단위 개봉 + 짧은 연출</h4><p>일반 상자는 결과 확인 중심, BM 상자는 연출 중심으로 성격을 분리해 획득의 몰입도와 기대감을 높입니다.</p></div>
+    <div class="step"><h4>획득 과정에 의미 부여</h4><p>단순 결과 확인 → 획득 연출 + 기대감 축적 구조로 전환. 결과 자체보다 과정을 통해 만족도를 높입니다.</p></div>
+    <div class="step"><h4>연출 작업 분리</h4><p>UI만으로 3D 상자·애니메이션을 만들면 리소스가 크고, UI 이펙트만으로는 경험이 제한적 — 상자는 NPC/프랍 리소스로 분리했습니다.</p></div>
+  </div>
+  <div class="split">
+    <figure><img src="assets/img/gacha/01.webp" alt="이달의 상자 씬 대기 상태" loading="lazy"><figcaption>이달의 상자 씬 — Idle 상태로 둥실 떠 있는 상자</figcaption></figure>
+    <figure><img src="assets/img/gacha/02.webp" alt="상자 개봉 연출" loading="lazy"><figcaption>개봉 연출</figcaption></figure>
+  </div>
+</section>
+
+<section class="chapter" id="policy" data-toc="정책 결정">
+  <span class="eyebrow">02 · Policy</span>
+  <h2>편의 기능을 '넣지 않은' 이유까지 문서로</h2>
+  <p class="lede">초기 버전에서는 기획 의도와 충돌하는 편의 기능을 의도적으로 제외하고, 그 이유와 이후 검토 조건을 함께 남겼습니다.</p>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>항목</th><th>결정</th><th>근거</th></tr></thead>
+    <tbody>
+      <tr><td>연출 스킵</td><td>제공하지 않음</td><td>스킵이 있으면 결과만 빠르게 확인하게 되어 '획득 과정의 경험'이라는 의도와 충돌</td></tr>
+      <tr><td>일괄 오픈</td><td>제공하지 않음</td><td>편의성은 높지만 연출과 기대감 축적이라는 의도와 충돌 → BM 효과 약화</td></tr>
+      <tr><td>연속 오픈</td><td>초기 미제공 → 후속 버전에서 추가</td><td>초기엔 일괄 오픈과 다르지 않다고 판단. 이후 '자동 진행' 토글과 정지 버튼으로 연출은 유지하면서 반복 조작 부담을 줄이는 방식으로 개선</td></tr>
+      <tr><td>천장 보상</td><td>제공하지 않음</td><td>-</td></tr>
+      <tr><td>상자당 보상</td><td>최대 1개</td><td>2개 이상 지급이 필요하면 추후 개선</td></tr>
+      <tr><td>인벤토리 노출</td><td>씬에서 숨김</td><td>획득은 연출 이후 결과 UI에서 확인 — 스포일러 방지로 기대감 극대화</td></tr>
+      <tr><td>기존 획득 팝업</td><td>출력하지 않음</td><td>이미 UI 연출로 보여주고 있고, 화면을 한 번 더 눌러야 하는 뎁스가 추가되기 때문</td></tr>
+    </tbody></table></div>
+</section>
+
+<section class="chapter" id="flow" data-toc="개봉 흐름 · 연출 분기">
+  <span class="eyebrow">03 · Flow</span>
+  <h2>버튼 규칙과 연출 분기</h2>
+  <p class="lede">마을·길드 아지트에서만 씬이 열리고(그 외에는 리절트 메시지), 보유 개수에 따라 열기 버튼이 바뀝니다. 이달의 아이템이 포함되면 더 길고 화려한 희귀 연출이 재생됩니다.</p>
+  <div class="widget" data-widget="gachaSim"></div>
+  <div class="grid g2">
+    <div class="panel corner"><span class="num">NORMAL · ≤ 1.0s</span><h3>일반 획득 연출</h3><p class="muted"><code>ItemBoxReward.ItemOfTheMonth = False</code>. BM 상자이므로 일반 연출도 어느 정도 화려함은 있어야 합니다.</p></div>
+    <div class="panel corner"><span class="num">RARE · 1.5 ~ 2.0s</span><h3>희귀 획득 연출</h3><p class="muted"><code>ItemOfTheMonth = True</code> 아이템 포함 시. 열리기 전에 한 번 더 덜그럭거리는 등 일반 연출과 차이가 느껴지도록 요청했습니다.</p></div>
+  </div>
+  <h3>연출 중 / 연출 후 상태 정의</h3>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>시점</th><th>처리</th></tr></thead>
+    <tbody>
+      <tr><td>열기 클릭</td><td><code>ItemConsume.InventoryCheck</code> 값으로 인벤토리 체크 → 리턴되면 상자를 쓰지 않고 상황별 리절트 메시지</td></tr>
+      <tr><td>연출 재생 중</td><td>열기 버튼 딤드 · 키보드/마우스 입력 비활성 · Esc 등 씬 이탈 불가 · 자동 진행/옵션 입력 불가</td></tr>
+      <tr><td>연출 종료</td><td>상자는 Idle로 돌아가지 않고 끝 프레임 유지 · 음영 배경 위에 보상 아이콘(1/5/10개) 출력 · 이달의 아이템은 테두리 하이라이트</td></tr>
+      <tr><td>확성기</td><td>이달의 아이템 획득 시 리전 전체 굿 노티스 — 획득 UI 애니메이션이 모두 끝난 뒤 출력, 2개 이상이면 순차 재생. 아니면 본인에게만 노멀 노티스</td></tr>
+      <tr><td>보유 개수</td><td>아이템 개수 변경 패킷을 받는 즉시 리프레시 (경매장에서 구매한 경우 포함)</td></tr>
+    </tbody></table></div>
+  <div class="split">
+    <figure><img src="assets/img/gacha/03.webp" alt="" loading="lazy"><figcaption>개봉 결과 — 보상 아이콘 출력</figcaption></figure>
+    <figure><img src="assets/img/gacha/04.webp" alt="" loading="lazy"><figcaption>개봉 결과 — 이달의 아이템 하이라이트</figcaption></figure>
+  </div>
+  <div class="split">
+    <figure class="vid"><video src="assets/video/gacha-fx.mp4" poster="assets/video/gacha-fx.jpg" controls preload="none" playsinline></video><figcaption>상자 개봉 연출</figcaption></figure>
+    <figure class="vid"><video src="assets/video/gacha-box.mp4" poster="assets/video/gacha-box.jpg" controls preload="none" playsinline></video><figcaption>실제 플레이 — 이달의 상자 씬</figcaption></figure>
+  </div>
+</section>
+
+<section class="chapter" id="prob" data-toc="확률 · 보상 풀">
+  <span class="eyebrow">04 · Probability</span>
+  <h2>보상 풀과 확률 공개</h2>
+  <div class="grid g2">
+    <div class="panel corner"><h3>보상 풀 생성</h3><p class="muted"><code>ItemUseFunctionType == RandomBoxOfTheMonth</code>이면 <code>UseFunctionArg1</code>의 RewardGroup을 <code>ItemBoxReward.RewardGroup</code>과 매핑해 랜덤 보상 풀을 생성합니다. <code>JobCondition</code>에 직업이 정의되어 있으면 캐릭터 직업과 일치할 때만 풀에 포함하고, 0이면 직업과 관계없이 포함합니다.</p></div>
+    <div class="panel corner"><h3>확률 팝업</h3><p class="muted">기존 랜덤 상자 확률 팝업을 재사용하되, 이달의 아이템을 최상단에 배치하고 하이라이트합니다. 같은 그룹끼리는 <code>ItemBoxReward.Order</code>가 낮은 순으로 정렬합니다. 경매장 버튼은 상자 이름을 자동 입력해 검색합니다.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="inven" data-toc="인벤토리 체크 개선">
+  <span class="eyebrow">05 · Side Fix</span>
+  <h2>상자 인벤토리 체크 로직 개선</h2>
+  <p class="lede">기존에는 일반·탈리스만 인벤토리가 모두 1칸씩 비어 있어야만 상자를 쓸 수 있었습니다. 상자 종류마다 실제로 필요한 인벤토리만 체크하도록 바꿨습니다.</p>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>InventoryCheck</th><th>Enum</th><th>체크 대상</th><th>리턴 메시지</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td><code>None</code></td><td>체크하지 않음</td><td>-</td></tr>
+      <tr><td>1</td><td><code>AllCheck</code></td><td>일반·탈리스만 중 하나라도 가득 차면 리턴</td><td>일반, 탈리스만 인벤토리가 가득 차 아이템 사용이 불가능합니다.</td></tr>
+      <tr><td>2</td><td><code>CommonCheck</code></td><td>일반 인벤토리만 (탈리스만은 가득 차도 허용)</td><td>일반 인벤토리가 가득 차 아이템 사용이 불가능합니다.</td></tr>
+      <tr><td>3</td><td><code>TalismanCheck</code></td><td>탈리스만 인벤토리만 (일반은 가득 차도 허용)</td><td>탈리스만 인벤토리가 가득 차 아이템 사용이 불가능합니다.</td></tr>
+    </tbody></table></div>
+  <p class="prose">적용 대상은 상자형 소모품(<code>RandomBox</code> · <code>SelectionBox</code> · <code>FixedBox</code> · <code>RandomBoxOfTheMonth</code>)으로 한정하고, 사용할 수 없을 때 아이콘을 별도로 딤드하지 않고 상황에 맞는 메시지로 안내합니다.</p>
+</section>
+
+<section class="chapter" id="ops" data-toc="리소스 · BI 로그">
+  <span class="eyebrow">06 · Production</span>
+  <h2>필요 리소스와 BI 로그 정의</h2>
+  <div class="grid g2">
+    <div class="panel corner"><h3>필요 리소스 요청</h3><ul class="list" style="margin:0">
+      <li>상자 원화 1장 · 상자 NPC 또는 프랍 1개 · BM 상자 아이콘</li>
+      <li>애니메이션 3종 — Idle(둥실 떠다님), 오픈 일반 / 희귀</li>
+      <li>오픈 연출 사운드 · 이펙트 — 일반 / 희귀</li>
+      <li>애니메이션 경로는 GlobalFactor에 정의해 리소스 교체에 대응</li></ul></div>
+    <div class="panel corner"><h3>BI 로그 · <code>RandomBoxOfTheMonth_Open</code></h3><ul class="list" style="margin:0">
+      <li><code>account_id</code> · <code>character_id</code></li>
+      <li><code>use_count</code> — 한 번에 몇 개를 열었는지</li>
+      <li><code>itemofthemonth</code> — 이달의 아이템 획득 수</li>
+      <li><code>reward_info_list</code> — type · idx · uid · amt</li></ul></div>
+  </div>
+  <div class="callout"><b>설계 포인트</b><p>개봉 단위(1/5/10)별 사용 패턴과 이달의 아이템 획득을 로그로 남겨, 라이브에서 상품 구성과 연출 정책을 지표로 다시 검토할 수 있게 했습니다.</p></div>
+</section>

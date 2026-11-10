@@ -1,0 +1,123 @@
+<!--meta {"game":"ud","short":"카드 앨범 · 덱","title":"카드 앨범 · 덱","one":"모은 카드는 앨범의 성장으로, 장착한 카드는 덱의 효과로 이어지는 수집·강화 시스템 — 다크디셈버에서 원기획하고 언디셈버로 이관해 라이브에서 개선","cover":"assets/img/card/06.webp","desc":"카드 앨범·덱 — 수집·강화 시스템 설계, 그룹/효과 조건 분리 ERD, UI 정보 구조, 언디셈버 이관 후 롱프레스 동선 개선","meta":[["GAME","다크디셈버 → 언디셈버"],["ROLE","시스템 메인 기획"],["SCOPE","시스템 · 데이터 테이블 · UI/UX · 이관 개선"]],"contrib":[["시스템 기획",100],["데이터 테이블 설계",100],["UI/UX 정책",100]]} -->
+<section class="chapter" id="goal" data-toc="기획 목표">
+  <span class="eyebrow">01 · Goal</span>
+  <h2>카드를 계속 모으고 강화할 이유</h2>
+  <p class="lede">수집·강화한 카드가 앨범의 누적 성장과 덱의 조합 선택, 두 경로로 쓰이도록 설계했습니다. 모은 카드를 조합에 따라 다양한 전투 환경에서 활용하는 것이 목표였습니다.</p>
+  <div class="flow">
+    <div><b>카드 수집 · 강화</b>카드 획득과 강화 단계 상승</div>
+    <div><b>카드 앨범</b>보유 카드 수 + 강화 합 → 조건 달성 시 앨범 효과</div>
+    <div><b>카드 덱</b>장착 카드 수 + 강화 합 → 조합 구성 시 세트 효과</div>
+  </div>
+  <div class="steps" style="--n:3">
+    <div class="step"><h4>수집을 성장으로</h4><p>수집·강화한 카드로 앨범 효과를 쌓고, 다음에 달성할 목표를 제공했습니다.</p></div>
+    <div class="step"><h4>모으기와 조합하기</h4><p>앨범은 계속 모을 목표를, 덱은 필요한 효과에 맞춰 카드를 고르는 선택을 제공합니다.</p></div>
+    <div class="step"><h4>새로운 그룹 추가</h4><p>구성 카드와 효과 조건을 따로 관리해, 새 앨범과 덱 세트를 쉽게 추가할 수 있게 했습니다.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="roles" data-toc="앨범 / 덱 역할 구조">
+  <span class="eyebrow">02 · Structure</span>
+  <h2>같은 카드 그룹, 다른 역할</h2>
+  <p class="lede">카드 앨범과 카드 덱은 동일한 카드 그룹을 기반으로 하지만, 앨범은 <strong>누적 수집 목표</strong>를, 덱은 <strong>장착 기반 세팅 목표</strong>를 제공하도록 역할을 분리했습니다.</p>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>구분</th><th>카드 앨범</th><th>카드 덱</th></tr></thead>
+    <tbody>
+      <tr><td>핵심 목적</td><td>수집 / 강화 달성 보상</td><td>전투 세팅 선택지</td></tr>
+      <tr><td>조건 기준</td><td>보유 수, 강화 합 — 앨범에 속한 카드의 보유 수와 강화 합을 함께 충족</td><td>장착 수, 강화 합 — 덱에 장착 중인 카드 수와 강화 합을 함께 충족 (강화 합 조건이 0이면 장착 수만 확인)</td></tr>
+      <tr><td>유저 경험</td><td>더 많은 카드를 수집하고 강화하며 달성감을 경험</td><td>다양한 카드 조합을 시도하며 전투 스타일을 구성</td></tr>
+      <tr><td>적용 방식</td><td>조건 달성 시 영구 적용 — 카드를 장착하지 않아도 앨범 효과 적용</td><td>장착 시 적용, 해제 시 해제 — 저장한 덱 구성에 따라 세트 효과 적용</td></tr>
+    </tbody></table></div>
+</section>
+
+<section class="chapter" id="erd" data-toc="ERD">
+  <span class="eyebrow">03 · Data</span>
+  <h2>그룹 구성과 효과 조건의 분리</h2>
+  <p class="lede">각 그룹에 들어갈 카드를 정하고, 같은 그룹의 앨범 보상과 덱 효과를 각각 설정할 수 있도록 구성했습니다.</p>
+  <div class="split wide-l">
+    <figure><img src="assets/img/slides/p19.webp" alt="카드 앨범·덱 ERD" loading="lazy"><figcaption>ERD — Card · CardCollection · CardCollectionReward · CardDeckSetEffect</figcaption></figure>
+    <div class="prose">
+      <h3 style="margin-top:0">한 카드를 여러 묶음에 활용</h3>
+      <p>카드 A의 정보는 한 번만 만들고, 여러 앨범·덱 세트의 구성 카드로 지정할 수 있습니다.</p>
+      <ul>
+        <li><b>그룹 1</b> — 카드 A · B · C</li>
+        <li><b>그룹 2</b> — 카드 A · D · E</li>
+        <li><b>CardCollectionReward</b> — <code>RequireOwnedCount</code> · <code>RequireReinforce</code> · <code>CollectionStatKey1~3</code></li>
+        <li><b>CardDeckSetEffect</b> — <code>RequireOwnedCount</code> · <code>RequireReinforce</code> · <code>DeckStatKey1~3</code></li>
+        <li><b>StartDate / EndDate</b> — 시즌·이벤트 그룹의 노출 기간 제어</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="ui" data-toc="UI/UX 구조">
+  <span class="eyebrow">04 · UI / UX</span>
+  <h2>탐색 · 목표 · 조합, 세 개의 화면</h2>
+  <h3>카드 리스트 — 탐색과 실행을 한 화면에</h3>
+  <div class="split wide-l">
+    <figure><img src="assets/img/card/04.webp" alt="카드 리스트" loading="lazy"><figcaption>카드 리스트 (다크디셈버)</figcaption></figure>
+    <div class="prose"><ul>
+      <li><b>① 검색 · 목록</b> — 검색·필터·정렬과 카드별 보유 상태 확인</li>
+      <li><b>② 강화 대상</b> — 선택한 카드와 현재 목표 강화 단계 표시</li>
+      <li><b>③ 재료 · 실행</b> — 필요 재료, 보유량과 강화 실행 버튼 배치</li>
+    </ul><p>카드를 바꿔 선택하며 강화 조건을 비교하고, 요구량과 보유량을 함께 보여 실행 전에 부족한 재료를 판단하도록 했습니다.</p></div>
+  </div>
+  <h3>카드 앨범 — 다음에 할 행동을 판단</h3>
+  <div class="split wide-l">
+    <figure><img src="assets/img/card/05.webp" alt="카드 앨범" loading="lazy"><figcaption>카드 앨범 (다크디셈버)</figcaption></figure>
+    <div class="prose"><ul>
+      <li><b>① 앨범 목록</b> — 그룹별 수집 진행도와 효과 달성 상태</li>
+      <li><b>② 구성 카드</b> — 앨범에 필요한 카드의 보유·강화 상태</li>
+      <li><b>③ 조건 · 보상</b> — 달성에 필요한 조건과 획득 효과를 함께 표시</li>
+    </ul><p>미보유 카드는 획득하고, 강화 합이 부족하면 강화한다 — 부족한 조건과 그걸 채워 얻는 효과를 같은 화면에서 확인합니다.</p></div>
+  </div>
+  <h3>카드 덱 — 조합과 효과를 함께 비교</h3>
+  <div class="split wide-l">
+    <figure><img src="assets/img/card/06.webp" alt="카드 덱" loading="lazy"><figcaption>카드 덱 (다크디셈버)</figcaption></figure>
+    <div class="prose"><ul>
+      <li><b>① 카드 슬롯</b> — 6개 슬롯의 장착 상태 확인 및 카드 교체</li>
+      <li><b>② 세트 효과</b> — 장착한 카드로 충족한 효과와 조건 확인</li>
+      <li><b>③ 덱 저장</b> — 편집한 구성을 확인한 뒤 저장</li>
+    </ul><p><strong>이관 후 개선</strong> — 전체 효과 보기와 적용 효과 우선 정렬을 추가했습니다.</p></div>
+  </div>
+  <div class="slides" data-gallery><div class="strip">
+    <button data-cap="UI/UX 구조 — 카드 리스트"><img src="assets/img/slides/p20.webp" alt="" loading="lazy"></button>
+    <button data-cap="UI/UX 구조 — 카드 앨범"><img src="assets/img/slides/p21.webp" alt="" loading="lazy"></button>
+    <button data-cap="UI/UX 구조 — 카드 덱"><img src="assets/img/slides/p22.webp" alt="" loading="lazy"></button>
+  </div><div class="strip-note">포트폴리오 원본 슬라이드 · 클릭하면 크게 볼 수 있습니다.</div></div>
+</section>
+
+<section class="chapter" id="longpress" data-toc="UD 이관 후 개선">
+  <span class="eyebrow">05 · Live Improvement</span>
+  <h2>확인한 카드를 바로 강화 대상으로</h2>
+  <p class="lede">언디셈버로 이관한 뒤, 앨범·덱에서 본 카드를 강화하려면 카드 리스트에서 다시 찾아야 하는 불편을 발견했습니다. 롱프레스 진입을 추가해 '확인'과 '성장' 사이를 줄였습니다.</p>
+  <div class="rowlbl">기존</div>
+  <div class="flow old">
+    <div><b>앨범·덱</b>카드 확인</div><div><b>카드 리스트</b>이동</div><div><b>탐색</b>해당 카드 찾기</div><div><b>강화 대상</b>선택</div>
+  </div>
+  <div class="rowlbl">개선</div>
+  <div class="flow">
+    <div><b>카드 길게 누름</b>정보 팝업</div><div><b>강화하기</b>버튼</div><div><b>자동 등록</b>확인한 카드가 강화 슬롯에</div>
+  </div>
+  <div class="grid g2">
+    <div class="panel corner"><h3>조작 구분</h3><p class="muted">짧게 누르는 기존 동작은 유지하고, 길게 누르는 경우에만 정보 팝업을 출력합니다.</p></div>
+    <div class="panel corner"><h3>예외 처리</h3><p class="muted">미등록 카드는 강화 진입을 비활성화하고, 덱 편집 중 이동 시에는 저장 여부를 확인합니다.</p></div>
+  </div>
+  <div class="fig-grid" style="--c:3" data-gallery>
+    <figure><img src="assets/img/card/12.webp" alt="" loading="lazy"><figcaption>보유 카드 롱프레스 — 강화하기 활성</figcaption></figure>
+    <figure><img src="assets/img/card/11.webp" alt="" loading="lazy"><figcaption>미등록 카드 롱프레스 — 강화 진입 비활성</figcaption></figure>
+    <figure><img src="assets/img/card/10.webp" alt="" loading="lazy"><figcaption>강화하기 → 카드 리스트 강화 슬롯에 자동 등록</figcaption></figure>
+  </div>
+  <figure class="vid"><video src="assets/video/card.mp4" poster="assets/video/card.jpg" controls preload="none" playsinline></video><figcaption>실제 플레이 — 카드 리스트 · 강화 · 앨범 · 덱 전체 흐름 (약 6분)</figcaption></figure>
+</section>
+
+<section class="chapter" id="gallery" data-toc="개발 화면">
+  <span class="eyebrow">Appendix</span>
+  <h2>개발 화면</h2>
+  <div class="fig-grid" style="--c:3" data-gallery>
+    <figure><img src="assets/img/card/01.webp" alt="" loading="lazy"><figcaption>카드 리스트와 강화 패널</figcaption></figure>
+    <figure><img src="assets/img/card/02.webp" alt="" loading="lazy"><figcaption>카드 강화 연출</figcaption></figure>
+    <figure><img src="assets/img/card/03.webp" alt="" loading="lazy"><figcaption>강화 결과 연출</figcaption></figure>
+    <figure><img src="assets/img/card/07.webp" alt="" loading="lazy"><figcaption>덱 세트 효과 툴팁</figcaption></figure>
+    <figure><img src="assets/img/slides/p23.webp" alt="" loading="lazy"><figcaption>원본 슬라이드 — UD 개선</figcaption></figure>
+  </div>
+</section>

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시간의 성좌 통폐합 · 정석원 | 시스템·콘텐츠 기획자 포트폴리오</title>
+<meta name="description" content="언디셈버 시간의 성좌 통폐합 — 성장 파밍 동선 통합, 이벤트 데이터 연결, 기존 아이템·기록·미수령 보상 전환 정책">
+<meta property="og:type" content="website">
+<meta property="og:title" content="시간의 성좌 통폐합 · 정석원 | 시스템·콘텐츠 기획자 포트폴리오">
+<meta property="og:description" content="언디셈버 시간의 성좌 통폐합 — 성장 파밍 동선 통합, 이벤트 데이터 연결, 기존 아이템·기록·미수령 보상 전환 정책">
+<meta property="og:image" content="assets/img/constellation/04.webp">
+<meta name="theme-color" content="#0c0a09">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="projects">
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#c9a46a" stroke-width="1.6">
+<circle cx="32" cy="32" r="28" opacity=".55"/><circle cx="32" cy="32" r="20"/><path d="M32 6 L54 44 H10 Z" opacity=".8"/>
+<path d="M32 58 L10 20 H54 Z" opacity=".35"/></g><circle cx="32" cy="32" r="3.2" fill="#e9cd93"/></svg><span><b>JEONG SEOKWON</b><em> · Portfolio</em></span></a>
+    <nav class="nav-links" aria-label="주요 메뉴">
+      <a href="index.html#about" data-nav="about">About</a>
+      <a href="index.html#career" data-nav="career">Career</a>
+      <a href="index.html#projects" data-nav="projects">Projects</a>
+      <a href="index.html#works" data-nav="works">Other Works</a>
+      <a href="index.html#contact" data-nav="contact">Contact</a>
+    </nav>
+    <div class="bgm">
+      <span class="bgm-label">BGM OFF</span>
+      <input type="range" min="0" max="1" step="0.01" aria-label="BGM 볼륨">
+      <button class="bgm-btn" aria-pressed="false" title="BGM 켜기"><span class="eq"><i></i><i></i><i></i><i></i></span></button>
+    </div>
+    <button class="menu-btn" aria-label="메뉴"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  </div>
+</header>
+<main>
+
+<section class="p-hero">
+  <div class="bg" style="background-image:url('assets/img/constellation/04.webp')"></div>
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html#projects">Projects</a><span>/</span><span class="tag ud">UNDECEMBER · 언디셈버</span></div>
+    <h1>시간의 성좌 통폐합</h1>
+    <p class="one">성장 보상의 역할은 유지하면서, 일반 아이템 파밍과 분리되어 있던 플레이 동선을 카오스 던전으로 통합한 라이브 개편</p>
+    <div class="meta"><div><span>GAME</span><b>언디셈버 · 라이브</b></div><div><span>ROLE</span><b>콘텐츠 메인 기획</b></div><div><span>SCOPE</span><b>개편 방향 · 이벤트 데이터 · 전환 정책</b></div><div><span>CONTRIBUTION</span><div class="contrib"><div class="bar"><span>개편 방향 제안 · 콘텐츠 구성</span><span>100%</span><i style="--v:100%"></i></div><div class="bar"><span>이벤트 데이터 · 전환 데이터</span><span>100%</span><i style="--v:100%"></i></div><div class="bar"><span>UI/UX 정책</span><span>100%</span><i style="--v:100%"></i></div></div></div></div>
+  </div>
+</section>
+<div class="p-body">
+  <div class="wrap p-layout">
+    <aside class="toc"><b>CONTENTS</b><a href="#bg">기획 배경</a><a href="#join">참여 설계</a><a href="#battle">전투 구성</a><a href="#erd">ERD · 데이터 연결</a><a href="#migrate">전환 설계</a><a href="#slides">원본 슬라이드</a></aside>
+    <div class="p-content">
+<section class="chapter" id="bg" data-toc="기획 배경">
+  <span class="eyebrow">01 · Background</span>
+  <h2>시즌마다 따로 반복하던 성장 파밍</h2>
+  <p class="lede">카오스 던전 파밍에 더해, 조디악 스톤(장비류)을 위한 별도 콘텐츠에도 시간을 써야 했습니다.</p>
+  <div class="problem">
+    <div class="p"><span class="lbl">PROBLEM · 큰 볼륨과 시즌 반복 부담</span><p>일반 아이템 드랍이 없는 '시간의 성좌'를 조디악 스톤을 위해 별도로 진행해야 했습니다. 옵션과 감정 재료까지 매 시즌 초기화되어, 이용자의 개편 요구가 오래전부터 이어졌습니다.</p></div>
+    <div class="s"><span class="lbl">DECISION · 보상 획득을 기존 동선으로</span><p>감정·조디악 스톤의 획득 경로를 <strong>카오스 던전 이벤트</strong>로 옮겼습니다. 시즌 초기화 정책은 유지하면서, 별도 콘텐츠를 반복하는 부담을 줄이고자 했습니다.</p></div>
+  </div>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>구분</th><th>개편 전</th><th>개편 후</th></tr></thead>
+    <tbody>
+      <tr><td>진입 · 진행</td><td>전용 입장 재료 → 월드맵 · 단계 진행</td><td class="hl">카오스 던전 → 오브젝트 발견 · 전투</td></tr>
+      <tr><td>성장 보상</td><td>기존 시간의 성좌 콘텐츠에서 감정 · 조디악 스톤 획득</td><td class="hl">카오스 던전 파밍 중 함께 획득</td></tr>
+      <tr><td>유지 · 정리</td><td>전용 맵 · 퀘스트 · 재료와 성좌 몬스터</td><td class="hl">진행 구조 정리 / 몬스터 · 성장 보상 활용</td></tr>
+    </tbody></table></div>
+  <div class="callout"><b>설계 초점</b><p>성장 보상이 하던 역할은 그대로 두고, '어디서 얻는가'만 플레이어가 이미 머무는 동선 안으로 옮긴다.</p></div>
+</section>
+
+<section class="chapter" id="join" data-toc="참여 설계">
+  <span class="eyebrow">02 · Participation</span>
+  <h2>원하는 이벤트를 확정하는 선택</h2>
+  <p class="lede">자연 발생과 카오스 스톤을 통한 확정 발생을 함께 제공해, 목표에 맞게 참여하도록 구성했습니다.</p>
+  <div class="split wide-r">
+    <div class="prose">
+      <p>카오스 던전 클리어 시 얻는 <strong>카오스 점수</strong>로 카오스 스톤을 사용하면, 시간의 성좌 이벤트를 확정적으로 발생시킬 수 있습니다. 파밍 중 우연히 만나는 재미와, 필요한 보상을 노리는 계획적인 플레이를 모두 열어 두었습니다.</p>
+      <p>구현은 새 시스템을 만들지 않고 <strong>기존 이벤트 확정 발생 구조</strong>(<code>ChaosEventItemFunction</code>)를 활용했습니다. 발생시킬 이벤트 이넘(<code>ChaosEventType</code>)을 추가해 시간의 성좌 이벤트와 연결했습니다.</p>
+    </div>
+    <figure><img src="assets/img/constellation/01.webp" alt="카오스 던전 이벤트 선택 팝업" loading="lazy"><figcaption>실제 개발 화면 — 카오스 던전 화면 → 이벤트 선택 팝업</figcaption></figure>
+  </div>
+</section>
+
+<section class="chapter" id="battle" data-toc="전투 구성">
+  <span class="eyebrow">03 · Combat Flow</span>
+  <h2>던전 안에서 발견하고, 처치하고, 성장 보상을</h2>
+  <p class="lede">던전에서 '기억의 결정'을 발견하고, 상호작용으로 등장한 몬스터를 처치해 감정·조디악 스톤을 획득합니다.</p>
+  <div class="steps" style="--n:2">
+    <div class="step"><h4>기억의 결정 발견</h4><p>희귀 카오스 카드는 2~4개, 전설 카오스 카드는 3~5개의 오브젝트가 등장하도록 구성했습니다.</p></div>
+    <div class="step"><h4>전투 후 성장 보상</h4><p>오브젝트와 상호작용하면 몬스터가 등장하며, 처치 시 감정·조디악 스톤을 포함한 여러 아이템을 획득합니다.</p></div>
+  </div>
+  <div class="callout"><b>전투 흐름</b><p>기존 성좌 몬스터를 활용하고, 일부 보스의 기믹·페이즈 전환 연출은 필드 전투에 맞게 간소화했습니다.</p></div>
+  <div class="fig-grid" style="--c:2" data-gallery>
+    <figure><img src="assets/img/constellation/02.webp" alt="" loading="lazy"><figcaption>카오스 던전 내부의 기억의 결정 오브젝트</figcaption></figure>
+    <figure><img src="assets/img/constellation/03.webp" alt="" loading="lazy"><figcaption>상호작용 후 성좌 몬스터 등장</figcaption></figure>
+    <figure><img src="assets/img/constellation/04.webp" alt="" loading="lazy"><figcaption>필드 전투에 맞게 간소화한 보스 기믹</figcaption></figure>
+    <figure><img src="assets/img/constellation/05.webp" alt="" loading="lazy"><figcaption>처치 후 감정·조디악 스톤 등 보상 획득</figcaption></figure>
+  </div>
+  <figure class="vid"><video src="assets/video/constellation.mp4" poster="assets/video/constellation.jpg" controls preload="none" playsinline></video><figcaption>실제 플레이 — 이벤트 확정 발생부터 전투, 보상까지</figcaption></figure>
+</section>
+
+<section class="chapter" id="erd" data-toc="ERD · 데이터 연결">
+  <span class="eyebrow">04 · Data</span>
+  <h2>기존 이벤트 구조에 성좌 이벤트를 연결</h2>
+  <p class="lede">발생 조건, 팩 구성, 오브젝트와 몬스터 구성을 나누어 카오스 던전 이벤트에 연결했습니다.</p>
+  <div class="flow">
+    <div><b>StageEventControl</b>조건 판정 (StageType · Grade)</div>
+    <div><b>StageEventMode</b>ModeType · CardGrade → 팩 Group 조회</div>
+    <div><b>StageEventPack</b>TargetGroupKey → TreasureBox / Spawner</div>
+    <div><b>Prop · Monster</b>프랍 리소스·등급 / 몬스터 스폰</div>
+  </div>
+  <p class="prose">구현 예시 — 팩 Group <code>1000101</code> → TreasureBox 그룹 <code>7300001</code> → SpawnerGroup <code>2982001</code> → 연결된 몬스터 스폰. <code>EventGroupID</code>는 레벨 내 볼륨 ID를 참조합니다.</p>
+  <figure><img src="assets/img/slides/p14.webp" alt="시간의 성좌 이벤트 ERD" loading="lazy"><figcaption>ERD — 기존 이벤트 구조에 성좌 이벤트를 연결</figcaption></figure>
+</section>
+
+<section class="chapter" id="migrate" data-toc="전환 설계">
+  <span class="eyebrow">05 · Migration Policy</span>
+  <h2>사용처 종료와 기존 획득 상태를 구분</h2>
+  <p class="lede">라이브 개편의 핵심은 '이미 가진 것'을 어떻게 다루는가였습니다. 콘텐츠에 연결된 공급·사용처를 정리하고, 보유 아이템과 기존 기록의 처리 기준을 마련했습니다.</p>
+  <div class="callout"><b>처리 원칙</b><p>이미 획득한 기록은 유지하고, 아직 받지 못한 보상은 대상별 규칙으로 구분하여 검증한다.</p></div>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>처리 대상</th><th>변경 내용</th><th>설계 시 확인한 점</th></tr></thead>
+    <tbody>
+      <tr><td>재료 공급 · 사용처</td><td>드랍 · 상점 공급 및 전용 기능 정리</td><td>퀘스트 · 연금술 · 경매장 연결까지 점검</td></tr>
+      <tr><td>기존 보유 아이템</td><td>판매가 · 아이템 설명 변경 후 후속 삭제 처리</td><td>인벤토리 · 보관함 · 연금술 슬롯 구분</td></tr>
+      <tr><td>시나리오 도감</td><td>해금 조건 변경 / 폐지 재료 보상 제거</td><td>미수령 보상 수령과 중복 수령 방지</td></tr>
+      <tr><td>업적 · 칭호 · 메달리온</td><td>기존 데이터 및 획득 기록 유지</td><td>신규 획득 조건과 미수령 상태 별도 처리</td></tr>
+    </tbody></table></div>
+  <div class="grid g2">
+    <div class="panel corner"><h3>칭호 · 수령 가능한 상태</h3><p class="muted">조건이 바뀌어도 획득 버튼이 활성화되어 수령 가능</p></div>
+    <div class="panel corner"><h3>메달리온 · 획득 전 상태</h3><p class="muted">조건 변경 후 신규 획득 불가, 기존 획득 유저는 보유 유지</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="slides" data-toc="원본 슬라이드">
+  <span class="eyebrow">Appendix</span>
+  <h2>포트폴리오 원본 슬라이드</h2>
+  <div class="slides" data-gallery><div class="strip">
+    <button data-cap="참여 설계 — 원하는 이벤트를 확정하는 선택"><img src="assets/img/slides/p12.webp" alt="" loading="lazy"></button>
+    <button data-cap="ERD — 기존 이벤트 구조에 성좌 이벤트를 연결"><img src="assets/img/slides/p14.webp" alt="" loading="lazy"></button>
+    <button data-cap="전환 설계 — 사용처 종료와 기존 획득 상태를 구분"><img src="assets/img/slides/p15.webp" alt="" loading="lazy"></button>
+  </div><div class="strip-note">클릭하면 크게 볼 수 있습니다.</div></div>
+</section>
+
+<div class="p-next"><a href="p-rune-preset.html"><span>← PREV</span><b>룬캐스트 프리셋</b></a><a class="nx" href="p-card.html"><span>NEXT →</span><b>카드 앨범 · 덱</b></a></div>
+    </div>
+  </div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 정석원 · System &amp; Content Designer · zaqkoko@naver.com</div>
+    <div class="bgm-credit">게임 화면과 리소스의 저작권은 니즈게임즈에 있으며 포트폴리오 목적으로만 사용했습니다. BGM은 Web Audio로 실시간 생성됩니다.</div>
+  </div>
+</footer>
+<script src="assets/js/widgets.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

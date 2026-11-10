@@ -1,0 +1,74 @@
+<!--meta {"game":"ud","short":"룬캐스트 프리셋","title":"룬캐스트 프리셋","one":"여러 장착 영역의 구성을 저장하고, 현재 보유 상태에 맞춰 복원하는 빌드 전환 시스템","cover":"assets/img/rune-preset/02.webp","desc":"언디셈버 룬캐스트 프리셋 — 빌드 저장/복원 구조, 캐릭터·계정 단위 분리, 부분 성공 예외 처리 설계","meta":[["GAME","언디셈버 · 라이브"],["ROLE","시스템 메인 기획"],["SCOPE","저장 구조 · 복원 규칙 · UI/UX · BM 슬롯"]],"contrib":[["시스템 기획",100],["UI/UX 정책",100]]} -->
+<section class="chapter" id="bg" data-toc="기획 배경">
+  <span class="eyebrow">01 · Background</span>
+  <h2>빌드를 바꾸려면, 룬을 전부 다시 놓아야 했다</h2>
+  <p class="lede">언디셈버의 빌드는 룬 캐스트(헥사 배치)와 룬 스톤, 스킬·트리거·퀵 슬롯이 얽혀 완성됩니다.</p>
+  <div class="problem">
+    <div class="p"><span class="lbl">PROBLEM</span><p>빌드를 바꾸려면 장착한 룬을 모두 빼고 다시 배치해야 했습니다. 일부만 조정할 때도 시도 중 구성이 틀어지면 원래 상태로 되돌리기 어려웠습니다.</p></div>
+    <div class="s"><span class="lbl">GOAL</span><p>빌드 전환과 원복을 <strong>한 번의 불러오기</strong>로 처리하고, 저장한 구성을 DB에 보관해 다른 PC·기기에서도 이용하도록 합니다.</p></div>
+  </div>
+  <div class="split">
+    <figure><img src="assets/img/rune-preset/01.webp" alt="불러오기 전 룬 캐스트" loading="lazy"><figcaption>불러오기 전 — 비어 있는 룬 캐스트</figcaption></figure>
+    <figure><img src="assets/img/rune-preset/02.webp" alt="불러오기 후 룬 캐스트" loading="lazy"><figcaption>불러오기 후 — 저장 당시의 슬롯에 룬이 다시 장착되고 결과가 안내됨</figcaption></figure>
+  </div>
+  <div class="steps" style="--n:3">
+    <div class="step"><h4>룬 배치 복원</h4><p>일반·RM(룬 마스터) 룬 캐스트에 저장한 룬을 찾아, 저장 당시의 슬롯에 다시 장착합니다.</p></div>
+    <div class="step"><h4>관련 장착 정보도 함께</h4><p>룬 스톤과 스킬·트리거·퀵 슬롯까지 저장 범위에 포함해 빌드 구성을 한 세트로 묶습니다.</p></div>
+    <div class="step"><h4>적용 결과 안내</h4><p>불러오기 결과를 알리고, 일부 룬을 적용하지 못했을 때는 '부분 성공'으로 구분합니다.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="scope" data-toc="저장 범위 · 관리 단위">
+  <span class="eyebrow">02 · Data Scope</span>
+  <h2>구성은 캐릭터 단위, 해금은 계정 단위</h2>
+  <p class="lede">무엇을 저장하는지와 누가 이용할 수 있는지를 서로 다른 단위로 나눴습니다.</p>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>구분</th><th>관리 단위</th><th>내용</th><th>설계 의도</th></tr></thead>
+    <tbody>
+      <tr><td>저장 대상</td><td>캐릭터</td><td>일반·RM 룬캐스트 / 룬 스톤 / 스킬 슬롯 / 트리거·RM 트리거 슬롯 / 퀵 슬롯</td><td>빌드를 구성하는 장착 영역을 한 세트로 저장</td></tr>
+      <tr><td>식별 방식</td><td>캐릭터</td><td>프리셋 이름, 개별 룬의 <code>UID</code>와 장착 위치를 DB에 저장</td><td>같은 종류의 룬도 UID로 각각 식별 → 강화 상태가 다른 동일 룬 구분</td></tr>
+      <tr><td>프리셋 슬롯 해금</td><td>계정</td><td>기본 1개 제공, 최대 5개. 추가 슬롯당 500 루비</td><td>시즌이 바뀌어도 구매한 슬롯은 초기화하지 않음</td></tr>
+      <tr><td>구매 안내</td><td>-</td><td>구매 전 비용과 유료 루비 우선 소모를 안내</td><td>BM 결제 경험의 투명성</td></tr>
+    </tbody></table></div>
+  <div class="split">
+    <figure><img src="assets/img/rune-preset/04.webp" alt="프리셋 목록 팝업" loading="lazy"><figcaption>프리셋 목록 — 저장·불러오기·이름 변경</figcaption></figure>
+    <figure><img src="assets/img/rune-preset/03.webp" alt="유료 프리셋 슬롯 구매 팝업" loading="lazy"><figcaption>유료 프리셋 슬롯 — 구매 전 비용과 유료 루비 우선 소모 안내</figcaption></figure>
+  </div>
+  <div class="callout"><b>설계 포인트</b><p>'구성(캐릭터)'과 '이용 권한(계정)'을 분리해, 캐릭터마다 다른 빌드를 저장하면서도 한 번 산 슬롯은 시즌 캐릭터가 바뀌어도 그대로 쓰도록 했습니다.</p></div>
+</section>
+
+<section class="chapter" id="rules" data-toc="복원 규칙 · 예외 처리">
+  <span class="eyebrow">03 · Restore Rules</span>
+  <h2>일부 룬이 없어도, 가능한 구성은 적용한다</h2>
+  <p class="lede">저장 당시와 현재 보유 상태는 언제든 달라질 수 있습니다. 하나가 없다고 전체를 막지 않도록 판단 기준을 세웠습니다.</p>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>현재 상태</th><th>적용 규칙</th><th>판단 기준</th></tr></thead>
+    <tbody>
+      <tr><td>일부 룬·룬 스톤이 없음</td><td>해당 슬롯을 건너뛰고 나머지 슬롯 확인</td><td>일부 누락으로 전체 적용을 막지 않음</td></tr>
+      <tr><td>일반·RM 룬 슬롯이 잠김</td><td>잠긴 슬롯에는 장착하지 않음</td><td>현재 슬롯 해금 상태를 유지</td></tr>
+      <tr><td>슬롯에 같은 룬 지정</td><td>스킬·트리거·퀵 슬롯의 중복 지정 허용</td><td>각 장착 영역의 이용 규칙을 반영</td></tr>
+      <tr><td>인벤토리 한도 초과</td><td>불러오기(기존 룬 장착 해제)로 발생한 초과는 허용</td><td>교체 과정에서 발생하는 예외를 명시</td></tr>
+    </tbody></table></div>
+  <div class="flow">
+    <div><b>① 기존 장착 해제</b>룬 캐스트와 장착 슬롯의 룬·룬 스톤 해제</div>
+    <div><b>② 보유 위치 확인</b>현재 모드의 보관함·도감에서 Unique ID 확인 후 인벤토리 이동</div>
+    <div><b>③ 저장 위치에 적용</b>룬 캐스트 배치와 나머지 장착 슬롯 복원</div>
+  </div>
+  <div class="widget" data-widget="runePreset"></div>
+  <h3>개발 중 보완</h3>
+  <ul class="list">
+    <li><b>저장 후 버튼 상태 갱신</b> — 저장 직후 프리셋 버튼이 최신 상태를 반영하도록 처리</li>
+    <li><b>보유 룬 안내 추가</b> — 적용하지 못한 룬이 무엇인지 확인할 수 있도록 안내</li>
+    <li><b>불러오기 쿨타임과 재시도 안내</b> — 연속 요청으로 인한 서버 부하·상태 꼬임을 막고, 재시도 시점을 데이터로 관리</li>
+  </ul>
+  <figure class="vid"><video src="assets/video/rune-preset.mp4" poster="assets/video/rune-preset.jpg" controls preload="none" playsinline></video><figcaption>실제 플레이 — 프리셋 저장과 불러오기</figcaption></figure>
+</section>
+
+<section class="chapter" id="slides" data-toc="원본 슬라이드">
+  <span class="eyebrow">Appendix</span>
+  <h2>포트폴리오 원본 슬라이드</h2>
+  <div class="slides" data-gallery><div class="strip">
+    <button data-cap="저장 범위 — 구성과 이용 권한의 관리 단위 분리"><img src="assets/img/slides/p08.webp" alt="" loading="lazy"></button>
+    <button data-cap="복원 규칙 — 일부 룬이 없어도 가능한 구성은 적용"><img src="assets/img/slides/p09.webp" alt="" loading="lazy"></button>
+  </div><div class="strip-note">클릭하면 크게 볼 수 있습니다.</div></div>
+</section>

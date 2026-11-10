@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>침식의 공세 · 정석원 | 시스템·콘텐츠 기획자 포트폴리오</title>
+<meta name="description" content="언디셈버 침식의 공세 — 웨이브 데이터, 축복/저주 선택 시스템, 레벨·스폰 설계, 보상방 이벤트 ERD">
+<meta property="og:type" content="website">
+<meta property="og:title" content="침식의 공세 · 정석원 | 시스템·콘텐츠 기획자 포트폴리오">
+<meta property="og:description" content="언디셈버 침식의 공세 — 웨이브 데이터, 축복/저주 선택 시스템, 레벨·스폰 설계, 보상방 이벤트 ERD">
+<meta property="og:image" content="assets/img/agony/04.webp">
+<meta name="theme-color" content="#0c0a09">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="projects">
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><svg class="mark" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#c9a46a" stroke-width="1.6">
+<circle cx="32" cy="32" r="28" opacity=".55"/><circle cx="32" cy="32" r="20"/><path d="M32 6 L54 44 H10 Z" opacity=".8"/>
+<path d="M32 58 L10 20 H54 Z" opacity=".35"/></g><circle cx="32" cy="32" r="3.2" fill="#e9cd93"/></svg><span><b>JEONG SEOKWON</b><em> · Portfolio</em></span></a>
+    <nav class="nav-links" aria-label="주요 메뉴">
+      <a href="index.html#about" data-nav="about">About</a>
+      <a href="index.html#career" data-nav="career">Career</a>
+      <a href="index.html#projects" data-nav="projects">Projects</a>
+      <a href="index.html#works" data-nav="works">Other Works</a>
+      <a href="index.html#contact" data-nav="contact">Contact</a>
+    </nav>
+    <div class="bgm">
+      <span class="bgm-label">BGM OFF</span>
+      <input type="range" min="0" max="1" step="0.01" aria-label="BGM 볼륨">
+      <button class="bgm-btn" aria-pressed="false" title="BGM 켜기"><span class="eq"><i></i><i></i><i></i><i></i></span></button>
+    </div>
+    <button class="menu-btn" aria-label="메뉴"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+  </div>
+</header>
+<main>
+
+<section class="p-hero">
+  <div class="bg" style="background-image:url('assets/img/agony/04.webp')"></div>
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html#projects">Projects</a><span>/</span><span class="tag ud">UNDECEMBER · 언디셈버</span></div>
+    <h1>침식의 공세</h1>
+    <p class="one">제한 시간 동안 웨이브를 처치하며 축복·저주를 선택해 전투 조건을 바꾸고, 보상 스테이지에서 재화로 보물상자를 여는 연속 전투 콘텐츠</p>
+    <div class="meta"><div><span>GAME</span><b>언디셈버 · 라이브</b></div><div><span>ROLE</span><b>콘텐츠 메인 · 시스템 서브</b></div><div><span>DIRECT</span><b>레벨 3+1종 · 퀘스트 · 웨이브/스폰 데이터</b></div><div><span>CO-DESIGN</span><b>콘텐츠 구조 · 축복/저주 시스템</b></div></div>
+  </div>
+</section>
+<div class="p-body">
+  <div class="wrap p-layout">
+    <aside class="toc"><b>CONTENTS</b><a href="#overview">콘텐츠 개요</a><a href="#system">전투 규칙 · 선택 흐름</a><a href="#level">레벨 설계</a><a href="#spawn">스폰 설계</a><a href="#reward">보상 시스템</a><a href="#erd">ERD</a></aside>
+    <div class="p-content">
+<section class="chapter" id="overview" data-toc="콘텐츠 개요">
+  <span class="eyebrow">01 · Overview</span>
+  <h2>웨이브 → 선택 → 웨이브 → 보상</h2>
+  <p class="lede">제한 시간 안에 웨이브를 처치하고, 축복과 저주를 함께 고르며 전투 조건을 바꿔 나갑니다. 마지막에는 보상 스테이지에서 모은 재화로 보물상자를 엽니다.</p>
+  <div class="grid g2">
+    <div class="panel corner"><h3>직접 담당</h3><ul class="list" style="margin:0"><li>콘텐츠 · 세부 시스템 보완</li><li>전투 및 보상 스테이지 레벨 작업 · 퀘스트</li><li>웨이브 · 스폰 데이터 구성</li></ul></div>
+    <div class="panel corner"><h3>공동 기획 · 시스템 서브</h3><ul class="list" style="margin:0"><li>콘텐츠 구조와 세부 규칙 논의</li><li>축복과 저주 시스템 공동 기획</li><li>시스템 서브 역할로 개발 과정 참여</li></ul></div>
+  </div>
+  <div class="fig-grid" style="--c:3;margin-top:24px" data-gallery>
+    <figure><img src="assets/img/agony/03.webp" alt="" loading="lazy"><figcaption>입장 화면</figcaption></figure>
+    <figure><img src="assets/img/agony/04.webp" alt="" loading="lazy"><figcaption>웨이브 전투</figcaption></figure>
+    <figure><img src="assets/img/agony/06.webp" alt="" loading="lazy"><figcaption>축복과 저주 선택</figcaption></figure>
+    <figure><img src="assets/img/agony/01.webp" alt="" loading="lazy"><figcaption>보상 스테이지 — 상자 배치</figcaption></figure>
+    <figure><img src="assets/img/agony/02.webp" alt="" loading="lazy"><figcaption>보상 스테이지 — 상자 개봉 후</figcaption></figure>
+    <figure><img src="assets/img/agony/05.webp" alt="" loading="lazy"><figcaption>종료 결과</figcaption></figure>
+  </div>
+  <figure class="vid"><video src="assets/video/agony.mp4" poster="assets/video/agony.jpg" controls preload="none" playsinline></video><figcaption>실제 플레이 — 입장부터 웨이브, 축복·저주 선택, 보상 스테이지까지 (약 3분)</figcaption></figure>
+</section>
+
+<section class="chapter" id="system" data-toc="전투 규칙 · 선택 흐름">
+  <span class="eyebrow">02 · System</span>
+  <h2>전투 규칙과 선택 흐름</h2>
+  <p class="lede">웨이브 진행을 데이터로 구성하고(<code>AgonyWaveConfig</code>), 전투 중 확인할 상태와 축복·저주 흐름을 연결했습니다.</p>
+  <div class="steps" style="--n:3">
+    <div class="step"><h4>웨이브 진행 상태</h4><p>전체 시간과 웨이브 시간, 보스 위험도(스폰까지의 %)와 남은 보스 수를 구분해 현재 전투 상태를 확인합니다.</p></div>
+    <div class="step"><h4>이점과 부담을 함께 선택</h4><p>축복과 저주를 한 선택지에서 확인합니다. 옵션 데이터에는 등급, 가중치, 적용 대상과 효과를 구분합니다.</p></div>
+    <div class="step"><h4>선택을 조정하는 수단</h4><p>제외 · 재굴림 · 확인으로 선택을 조정합니다. 재굴림 비용은 시도 횟수별 데이터로 관리합니다.</p></div>
+  </div>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>웨이브 예시 Key 1001</th><th>값</th></tr></thead>
+    <tbody>
+      <tr><td>웨이브 제한 시간</td><td>30초</td></tr>
+      <tr><td>보스 소환 필요 게이지</td><td>200</td></tr>
+      <tr><td>몬스터 등급별 처치 점수 (GaugePerKill)</td><td>10 · 30 · 50 · 80</td></tr>
+      <tr><td>보스 최대 스폰 수</td><td>1</td></tr>
+      <tr><td>콘텐츠 전체 시간 (GlobalFactor 31000014)</td><td>600초</td></tr>
+      <tr><td>재굴림 / 제외 횟수 (GlobalFactor 31000021)</td><td>재굴림 5 · 제외 5 · 특정 버프 보유 시 재굴림 10</td></tr>
+    </tbody></table></div>
+</section>
+
+<section class="chapter" id="level" data-toc="레벨 설계">
+  <span class="eyebrow">03 · Level Design</span>
+  <h2>사방의 압박과 이동을 유도하는 공간</h2>
+  <p class="lede">일반 몬스터의 접근 방향과 보스의 등장 위치에 서로 다른 규칙을 적용했습니다.</p>
+  <div class="grid g2">
+    <div class="panel corner"><span class="num">NORMAL · 8 ZONES</span><h3>일반 몬스터 — 8개 구간</h3><p class="muted">전체 레벨을 8개 구간으로 나누어 사방에서 몬스터가 접근하도록 구성했습니다. 여러 방향의 대응을 유도합니다.</p></div>
+    <div class="panel corner"><span class="num">BOSS · RANDOM</span><h3>보스 — 맵 전체에서 무작위</h3><p class="muted">보스 스포너의 범위를 맵 전체에 맞췄습니다. 등장 위치를 고정하지 않아 중앙에 머무르는 플레이를 줄이고자 했습니다.</p></div>
+  </div>
+  <div class="callout"><b>레벨 작업 범위</b><p>전투 스테이지 3종 · 보상 스테이지 1종 / 스포너 · 프랍 데이터 / 내비게이션 메시 · 시작 위치 설정</p></div>
+</section>
+
+<section class="chapter" id="spawn" data-toc="스폰 설계">
+  <span class="eyebrow">04 · Spawn Design</span>
+  <h2>구성은 유지하고, 등장 순서와 시간은 다르게</h2>
+  <p class="lede">전투마다 조합의 변화를 주면서도, 몬스터가 한꺼번에 생성되어 몰리지 않도록 구성했습니다. 등급별 총량은 유지하되 등장 순서와 시점을 조정해, 동시 생성 부하와 순간적인 밀집을 완화하고자 했습니다.</p>
+  <div class="spawn">
+    <div class="spawn-row"><b>딤프 종족 조합</b>
+      <div class="sp n">노말 ×3<small>0.0초</small></div><div class="sp n">노말 ×3<small>1.5초</small></div><div class="sp n">노말 ×3<small>3.0초</small></div><div class="sp m">마법 ×3<small>4.5초</small></div>
+      <div class="sp m">마법 ×3<small>6.0초</small></div><div class="sp r">희귀 ×2<small>7.5초</small></div><div class="sp r">희귀 ×2<small>9.0초</small></div><div class="sp u">유물 ×1<small>10.5초</small></div></div>
+    <div class="spawn-row"><b>원시 종족 조합</b>
+      <div class="sp u">유물 ×1<small>0.3초</small></div><div class="sp n">노말 ×3<small>1.8초</small></div><div class="sp n">노말 ×3<small>3.3초</small></div><div class="sp n">노말 ×3<small>4.8초</small></div>
+      <div class="sp m">마법 ×3<small>6.3초</small></div><div class="sp m">마법 ×3<small>7.8초</small></div><div class="sp r">희귀 ×2<small>9.3초</small></div><div class="sp r">희귀 ×2<small>10.8초</small></div></div>
+  </div>
+  <p class="muted" style="font-size:13px">실제 데이터 예시 — 종족별 몬스터 조합 · 각 칸: 등급·마릿수 / 아래: 생성 시점</p>
+  <div class="steps" style="--n:3">
+    <div class="step"><h4>무작위 몬스터 조합</h4><p>서로 다른 몬스터 조합을 준비하고 무작위로 등장하도록 구성했습니다.</p></div>
+    <div class="step"><h4>등급별 구성 유지</h4><p>몬스터 조합이 달라도 등급별 마릿수 구성은 유지했습니다.</p></div>
+    <div class="step"><h4>생성 시점 분산</h4><p>조합별 등급 등장 순서를 바꾸고, 각 묶음을 시간차로 생성했습니다.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="reward" data-toc="보상 시스템">
+  <span class="eyebrow">05 · Reward</span>
+  <h2>배치된 상자와 보상 데이터를 연결</h2>
+  <p class="lede">보상방의 공간 배치, 이벤트 실행, 상자 구성을 구분해 실제 게임 흐름으로 연결했습니다.</p>
+  <div class="split">
+    <div class="prose">
+      <ul>
+        <li><b>상자 프랍과 상호작용</b> — 보물상자 18종을 구성하고 종류·등급별로 배치했습니다. 상호작용 범위와 방향을 조절해 오동작을 방지했습니다.</li>
+        <li><b>열기 전 안내 연결</b> — Prop 테이블에 <code>OpenItemKey</code>, <code>OpenItemCount</code>로 필요 재화를 설정하고, <code>OpenItemDesc</code>를 추가해 안내 문구가 출력되도록 작업했습니다.</li>
+      </ul>
+      <p>예시: Stage <code>100004</code> → EventPackGroup <code>1000001</code> → TreasureBoxGroup <code>7200001~7200018</code> (Key와 Group을 구분)</p>
+    </div>
+    <figure><img src="assets/img/agony/01.webp" alt="보상 스테이지 상자 배치" loading="lazy"><figcaption>보상 스테이지 — 종류·등급별 상자 배치</figcaption></figure>
+  </div>
+</section>
+
+<section class="chapter" id="erd" data-toc="ERD">
+  <span class="eyebrow">06 · Data Structure</span>
+  <h2>콘텐츠 · 시스템 ERD</h2>
+  <p class="lede">이벤트 실행과 생성 대상을 분리하고, 맵 연결·공통 설정·웨이브 조건·선택 옵션·비용·보상 표시를 각각의 테이블 관계로 정리했습니다.</p>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>ERD</th><th>핵심 관계</th></tr></thead>
+    <tbody>
+      <tr><td>콘텐츠 ERD</td><td>StageEventMode → EventPackGroup으로 그룹 조회 → StageEventPack.TargetGroupKey로 상자/몬스터 그룹 조회. SpawnType에 따라 TreasureBox 또는 Spawner 참조</td></tr>
+      <tr><td>시스템 ERD ① 맵 연결</td><td>GlobalFactor 참조값으로 입장(100001~100003)·보상(100004) 스테이지 연결. 시간·횟수는 테이블 간 키가 아닌 진행 규칙</td></tr>
+      <tr><td>시스템 ERD ② 웨이브</td><td>입장 아이템 + 웨이브 단계로 AgonyWaveConfig 조회 → SpawnerGroupKey1~10 / BossSpawnGroupKey, 레벨 트리거 ID로 대상 식별</td></tr>
+      <tr><td>시스템 ERD ③ 선택·비용·보상</td><td>AgonyRogueGrade(등급 가중치) 1:N AgonyRogueOption(BuffKey/StatusKey). 현재 재굴림 횟수 → AgonyRerollCost, 입장 아이템 → AgonyRewardUi (표기 전용)</td></tr>
+    </tbody></table></div>
+  <div class="slides" data-gallery><div class="strip">
+    <button data-cap="시스템 구조 — 전투 규칙과 선택 흐름"><img src="assets/img/slides/p25.webp" alt="" loading="lazy"></button>
+    <button data-cap="스폰 설계 — 구성은 유지하고 등장 순서와 시간은 다르게"><img src="assets/img/slides/p27.webp" alt="" loading="lazy"></button>
+    <button data-cap="보상 시스템 — 배치된 상자와 보상 데이터를 연결"><img src="assets/img/slides/p28.webp" alt="" loading="lazy"></button>
+    <button data-cap="콘텐츠 ERD — 이벤트 실행과 생성 대상을 분리"><img src="assets/img/slides/p29.webp" alt="" loading="lazy"></button>
+    <button data-cap="시스템 ERD ① — 맵 연결과 공통 설정"><img src="assets/img/slides/p30.webp" alt="" loading="lazy"></button>
+    <button data-cap="시스템 ERD ② — 웨이브 조건과 스폰 그룹"><img src="assets/img/slides/p31.webp" alt="" loading="lazy"></button>
+    <button data-cap="시스템 ERD ③ — 선택 옵션 · 비용 · 보상 표시"><img src="assets/img/slides/p32.webp" alt="" loading="lazy"></button>
+  </div><div class="strip-note">포트폴리오 원본 슬라이드 · 클릭하면 크게 볼 수 있습니다.</div></div>
+</section>
+
+<div class="p-next"><a href="p-card.html"><span>← PREV</span><b>카드 앨범 · 덱</b></a><a class="nx" href="p-enhance.html"><span>NEXT →</span><b>장비 강화</b></a></div>
+    </div>
+  </div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 정석원 · System &amp; Content Designer · zaqkoko@naver.com</div>
+    <div class="bgm-credit">게임 화면과 리소스의 저작권은 니즈게임즈에 있으며 포트폴리오 목적으로만 사용했습니다. BGM은 Web Audio로 실시간 생성됩니다.</div>
+  </div>
+</footer>
+<script src="assets/js/widgets.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
