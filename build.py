@@ -20,6 +20,29 @@ SITE = "정석원 | 시스템·콘텐츠 기획자 포트폴리오"
 ORDER = ["p-rune-preset", "p-constellation", "p-card", "p-agony",
          "p-enhance", "p-ether", "p-gacha", "p-beles"]
 
+# 프로젝트별 포트폴리오 PDF 페이지 범위 (부록 슬라이드 자동 생성)
+SLIDES = {"p-rune-preset": (6, 9), "p-constellation": (10, 15), "p-card": (16, 23), "p-agony": (24, 32),
+          "p-enhance": (33, 41), "p-ether": (42, 47), "p-beles": (48, 52)}
+SLIDE_CAPS = {
+    6: "룬캐스트 프리셋 — 개요", 7: "저장한 빌드로 다시 전환", 8: "저장 범위 — 구성과 이용 권한의 관리 단위 분리",
+    9: "복원 규칙 — 일부 룬이 없어도 가능한 구성은 적용",
+    10: "시간의 성좌 통폐합 — 개요", 11: "기획 배경 — 시즌마다 따로 반복하던 성장 파밍", 12: "참여 설계 — 원하는 이벤트를 확정하는 선택",
+    13: "전투 구성 — 던전 안에서 발견하고 보상 획득", 14: "ERD — 기존 이벤트 구조에 성좌 이벤트를 연결", 15: "전환 설계 — 사용처 종료와 기존 획득 상태를 구분",
+    16: "카드 앨범·덱 — 개요", 17: "기획 목표 및 핵심 설계 방향", 18: "앨범 / 덱 역할 구조", 19: "ERD — 그룹 구성과 효과 조건의 분리",
+    20: "UI/UX 구조 — 카드 리스트", 21: "UI/UX 구조 — 카드 앨범", 22: "UI/UX 구조 — 카드 덱", 23: "UD 개선 — 확인한 카드를 바로 강화 대상으로",
+    24: "침식의 공세 — 개요", 25: "시스템 구조 — 전투 규칙과 선택 흐름", 26: "레벨 설계 — 사방의 압박과 이동을 유도하는 공간",
+    27: "스폰 설계 — 구성은 유지하고 등장 순서와 시간은 다르게", 28: "보상 시스템 — 배치된 상자와 보상 데이터를 연결",
+    29: "콘텐츠 ERD — 이벤트 실행과 생성 대상을 분리", 30: "시스템 ERD ① — 맵 연결과 공통 설정", 31: "시스템 ERD ② — 웨이브 조건과 스폰 그룹",
+    32: "시스템 ERD ③ — 선택 옵션 · 비용 · 보상 표시",
+    33: "장비 강화 — 개요", 34: "강화 구조 요약", 35: "보조재 확률 보정 구조", 36: "최근 입력한 보조재 우선 반영과 자동 조정",
+    37: "결과 확률 계산과 방지권 정책", 38: "테이블 구조 — 조건 조회와 키 참조", 39: "UI/UX 구조 — 강화 전 선택과 비용을 확인",
+    40: "UI/UX 구조 — 결과 공개와 리소스 연결", 41: "무기 강화 이펙트 — 장착 상태에서 성장 표현",
+    42: "에테르 코어 — 개요", 43: "슬롯과 성장 구조 — 획득과 장착의 두 단계", 44: "부위별 효과 — 하나의 코어를 세 부위에 활용",
+    45: "장착 리스크 — 실패와 기존 코어 파괴를 분리", 46: "데이터 구조 — 설정 단위와 조회 조건의 구분", 47: "실제 장착 화면 — 효과와 위험을 확인한 뒤 실행",
+    48: "차원 균열: 벨레스 — 개요", 49: "세 방향의 침입, 네 명의 대응 역할", 50: "보상만 고르지 않고, 감당할 전투 조건까지 비교",
+    51: "선택 조정과 지급 확정을 구분한 보상 교환", 52: "데이터 구조 — 난이도 · 웨이브 · 선택 · 보상",
+}
+
 FONTS = ("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700"
          "&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@500;600;700&display=swap")
 
@@ -56,11 +79,37 @@ NAV = """
   <div class="wrap">
     <a class="brand" href="index.html">{sigil}<span><b>JEONG SEOKWON</b><em> · Portfolio</em></span></a>
     <nav class="nav-links" aria-label="주요 메뉴">
-      <a href="index.html#about" data-nav="about">About</a>
-      <a href="index.html#career" data-nav="career">Career</a>
-      <a href="index.html#projects" data-nav="projects">Projects</a>
-      <a href="index.html#works" data-nav="works">Other Works</a>
-      <a href="index.html#contact" data-nav="contact">Contact</a>
+      <div class="nav-item has-sub"><a class="top" href="index.html#about" data-nav="about">About</a>
+        <div class="sub"><div class="sub-col">
+          <a href="index.html#about">기획 철학 · 핵심 강점</a>
+          <a href="index.html#letter">자기소개서</a>
+        </div></div></div>
+      <div class="nav-item has-sub"><a class="top" href="index.html#career" data-nav="career">Career</a>
+        <div class="sub"><div class="sub-col">
+          <a href="index.html#career">경력</a>
+          <a href="index.html#skills">스킬 · 학력</a>
+        </div></div></div>
+      <div class="nav-item has-sub"><a class="top" href="index.html#projects" data-nav="projects">Projects</a>
+        <div class="sub wide">
+          <div class="sub-col"><span class="sub-h ud">UNDECEMBER · 언디셈버</span>
+            <a href="p-rune-preset.html">룬캐스트 프리셋</a>
+            <a href="p-constellation.html">시간의 성좌 통폐합</a>
+            <a href="p-card.html">카드 앨범 · 덱</a>
+            <a href="p-agony.html">침식의 공세</a>
+          </div>
+          <div class="sub-col"><span class="sub-h dd">DARK DECEMBER · 다크디셈버</span>
+            <a href="p-enhance.html">장비 강화</a>
+            <a href="p-ether.html">에테르 코어</a>
+            <a href="p-gacha.html">가챠 상자 · 이달의 상자</a>
+            <a href="p-beles.html">차원 균열: 벨레스</a>
+          </div>
+        </div></div>
+      <div class="nav-item has-sub"><a class="top" href="index.html#works" data-nav="works">Other Works</a>
+        <div class="sub"><div class="sub-col">
+          <a href="index.html#works">기타 시스템 기획 · 라이브 개선</a>
+          <a href="index.html#docs">그 밖에 작성한 기획서</a>
+        </div></div></div>
+      <div class="nav-item"><a class="top" href="index.html#contact" data-nav="contact">Contact</a></div>
     </nav>
     <div class="bgm">
       <span class="bgm-label">BGM OFF</span>
@@ -95,7 +144,7 @@ LAYOUT = """<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{fonts}">
-<link rel="stylesheet" href="assets/css/style.css?v=3">
+<link rel="stylesheet" href="assets/css/style.css?v=8">
 </head>
 <body data-page="{page}">
 {gate}{nav}
@@ -103,8 +152,8 @@ LAYOUT = """<!doctype html>
 {main}
 </main>
 {footer}
-<script src="assets/js/widgets.js?v=3"></script>
-<script src="assets/js/main.js?v=3"></script>
+<script src="assets/js/widgets.js?v=8"></script>
+<script src="assets/js/main.js?v=8"></script>
 </body>
 </html>
 """
@@ -122,6 +171,18 @@ def project_page(meta, body, slug):
         f'<div class="bar"><span>{esc(k)}</span><span>{v}%</span><i style="--v:{v}%"></i></div>'
         for k, v in meta.get("contrib", []))
     metas = "".join(f'<div><span>{esc(k)}</span><b>{v}</b></div>' for k, v in meta["meta"])
+    if slug in SLIDES:
+        a, b = SLIDES[slug]
+        btns = "".join(
+            f'<button data-cap="p.{n} · {esc(SLIDE_CAPS[n])}"><img src="assets/img/slides/p{n:02d}.webp" alt="{esc(SLIDE_CAPS[n])}" loading="lazy"></button>'
+            for n in range(a, b + 1))
+        body += f"""
+<section class="chapter" id="slides" data-toc="포트폴리오 원본 슬라이드">
+  <span class="eyebrow">Appendix</span>
+  <h2>포트폴리오 원본 슬라이드</h2>
+  <p class="lede">PDF 포트폴리오 {a}~{b}쪽 전체입니다. 클릭하면 크게 보고 ← → 키로 넘길 수 있습니다.</p>
+  <div class="slide-grid" data-gallery>{btns}</div>
+</section>"""
     chapters = re.findall(r'<section class="chapter[^"]*" id="([^"]+)" data-toc="([^"]+)"', body)
     toc = "".join(f'<a href="#{cid}">{esc(lbl)}</a>' for cid, lbl in chapters)
     i = ORDER.index(slug)

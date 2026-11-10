@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="assets/css/style.css?v=3">
+<link rel="stylesheet" href="assets/css/style.css?v=8">
 </head>
 <body data-page="projects">
 
@@ -24,11 +24,37 @@
 <circle cx="32" cy="32" r="28" opacity=".55"/><circle cx="32" cy="32" r="20"/><path d="M32 6 L54 44 H10 Z" opacity=".8"/>
 <path d="M32 58 L10 20 H54 Z" opacity=".35"/></g><circle cx="32" cy="32" r="3.2" fill="#e9cd93"/></svg><span><b>JEONG SEOKWON</b><em> · Portfolio</em></span></a>
     <nav class="nav-links" aria-label="주요 메뉴">
-      <a href="index.html#about" data-nav="about">About</a>
-      <a href="index.html#career" data-nav="career">Career</a>
-      <a href="index.html#projects" data-nav="projects">Projects</a>
-      <a href="index.html#works" data-nav="works">Other Works</a>
-      <a href="index.html#contact" data-nav="contact">Contact</a>
+      <div class="nav-item has-sub"><a class="top" href="index.html#about" data-nav="about">About</a>
+        <div class="sub"><div class="sub-col">
+          <a href="index.html#about">기획 철학 · 핵심 강점</a>
+          <a href="index.html#letter">자기소개서</a>
+        </div></div></div>
+      <div class="nav-item has-sub"><a class="top" href="index.html#career" data-nav="career">Career</a>
+        <div class="sub"><div class="sub-col">
+          <a href="index.html#career">경력</a>
+          <a href="index.html#skills">스킬 · 학력</a>
+        </div></div></div>
+      <div class="nav-item has-sub"><a class="top" href="index.html#projects" data-nav="projects">Projects</a>
+        <div class="sub wide">
+          <div class="sub-col"><span class="sub-h ud">UNDECEMBER · 언디셈버</span>
+            <a href="p-rune-preset.html">룬캐스트 프리셋</a>
+            <a href="p-constellation.html">시간의 성좌 통폐합</a>
+            <a href="p-card.html">카드 앨범 · 덱</a>
+            <a href="p-agony.html">침식의 공세</a>
+          </div>
+          <div class="sub-col"><span class="sub-h dd">DARK DECEMBER · 다크디셈버</span>
+            <a href="p-enhance.html">장비 강화</a>
+            <a href="p-ether.html">에테르 코어</a>
+            <a href="p-gacha.html">가챠 상자 · 이달의 상자</a>
+            <a href="p-beles.html">차원 균열: 벨레스</a>
+          </div>
+        </div></div>
+      <div class="nav-item has-sub"><a class="top" href="index.html#works" data-nav="works">Other Works</a>
+        <div class="sub"><div class="sub-col">
+          <a href="index.html#works">기타 시스템 기획 · 라이브 개선</a>
+          <a href="index.html#docs">그 밖에 작성한 기획서</a>
+        </div></div></div>
+      <div class="nav-item"><a class="top" href="index.html#contact" data-nav="contact">Contact</a></div>
     </nav>
     <div class="bgm">
       <span class="bgm-label">BGM OFF</span>
@@ -51,7 +77,7 @@
 </section>
 <div class="p-body">
   <div class="wrap p-layout">
-    <aside class="toc"><b>CONTENTS</b><a href="#goal">기획 목표</a><a href="#roles">앨범 / 덱 역할 구조</a><a href="#erd">ERD</a><a href="#ui">UI/UX 구조</a><a href="#longpress">UD 이관 후 개선</a><a href="#gallery">개발 화면</a></aside>
+    <aside class="toc"><b>CONTENTS</b><a href="#goal">기획 목표</a><a href="#roles">앨범 / 덱 역할 구조</a><a href="#erd">ERD</a><a href="#ui">UI/UX 구조</a><a href="#longpress">UD 이관 후 개선</a><a href="#gallery">개발 화면</a><a href="#slides">포트폴리오 원본 슬라이드</a></aside>
     <div class="p-content">
 <section class="chapter" id="goal" data-toc="기획 목표">
   <span class="eyebrow">01 · Goal</span>
@@ -176,6 +202,12 @@
   </div>
 </section>
 
+<section class="chapter" id="slides" data-toc="포트폴리오 원본 슬라이드">
+  <span class="eyebrow">Appendix</span>
+  <h2>포트폴리오 원본 슬라이드</h2>
+  <p class="lede">PDF 포트폴리오 16~23쪽 전체입니다. 클릭하면 크게 보고 ← → 키로 넘길 수 있습니다.</p>
+  <div class="slide-grid" data-gallery><button data-cap="p.16 · 카드 앨범·덱 — 개요"><img src="assets/img/slides/p16.webp" alt="카드 앨범·덱 — 개요" loading="lazy"></button><button data-cap="p.17 · 기획 목표 및 핵심 설계 방향"><img src="assets/img/slides/p17.webp" alt="기획 목표 및 핵심 설계 방향" loading="lazy"></button><button data-cap="p.18 · 앨범 / 덱 역할 구조"><img src="assets/img/slides/p18.webp" alt="앨범 / 덱 역할 구조" loading="lazy"></button><button data-cap="p.19 · ERD — 그룹 구성과 효과 조건의 분리"><img src="assets/img/slides/p19.webp" alt="ERD — 그룹 구성과 효과 조건의 분리" loading="lazy"></button><button data-cap="p.20 · UI/UX 구조 — 카드 리스트"><img src="assets/img/slides/p20.webp" alt="UI/UX 구조 — 카드 리스트" loading="lazy"></button><button data-cap="p.21 · UI/UX 구조 — 카드 앨범"><img src="assets/img/slides/p21.webp" alt="UI/UX 구조 — 카드 앨범" loading="lazy"></button><button data-cap="p.22 · UI/UX 구조 — 카드 덱"><img src="assets/img/slides/p22.webp" alt="UI/UX 구조 — 카드 덱" loading="lazy"></button><button data-cap="p.23 · UD 개선 — 확인한 카드를 바로 강화 대상으로"><img src="assets/img/slides/p23.webp" alt="UD 개선 — 확인한 카드를 바로 강화 대상으로" loading="lazy"></button></div>
+</section>
 <div class="p-next"><a href="p-constellation.html"><span>← PREV</span><b>시간의 성좌 통폐합</b></a><a class="nx" href="p-agony.html"><span>NEXT →</span><b>침식의 공세</b></a></div>
     </div>
   </div>
@@ -188,7 +220,7 @@
     <div class="bgm-credit">게임 화면과 리소스의 저작권은 니즈게임즈에 있으며 포트폴리오 목적으로만 사용했습니다. BGM은 Web Audio로 실시간 생성됩니다.</div>
   </div>
 </footer>
-<script src="assets/js/widgets.js?v=3"></script>
-<script src="assets/js/main.js?v=3"></script>
+<script src="assets/js/widgets.js?v=8"></script>
+<script src="assets/js/main.js?v=8"></script>
 </body>
 </html>

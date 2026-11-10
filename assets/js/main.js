@@ -222,7 +222,13 @@ function initHeader(){
   if (rng){ rng.value = BGM.volume; rng.addEventListener('input', () => BGM.setVolume(parseFloat(rng.value))); }
   const mb = $('.menu-btn'), links = $('.nav-links');
   if (mb) mb.addEventListener('click', () => links.classList.toggle('open'));
-  links && links.addEventListener('click', e => { if (e.target.closest('a')) links.classList.remove('open'); });
+  links && links.addEventListener('click', e => {
+    const a = e.target.closest('a'); if (!a) return;
+    links.classList.remove('open');
+    // close the hover/focus dropdown after choosing an item
+    a.blur(); const item = a.closest('.nav-item');
+    if (item && window.matchMedia('(hover: hover)').matches){ item.classList.add('closing'); item.addEventListener('mouseleave', () => item.classList.remove('closing'), { once: true }); }
+  });
 }
 
 function toast(msg, ms = 2600){
@@ -323,7 +329,7 @@ document.addEventListener('click', e => {
     if (th){ th.innerHTML = `<video src="${vb.dataset.video}" controls autoplay playsinline style="width:100%;height:100%;object-fit:contain;background:#000"></video>`; th.style.cursor = 'default'; delete th.dataset.images; vb.remove(); }
     return;
   }
-  const t = e.target.closest('[data-images], [data-lb], figure img, .strip button');
+  const t = e.target.closest('[data-images], [data-lb], figure img, .strip button, .slide-grid button');
   if (!t || t.closest('a') || t.closest('.widget')) return;
   // work card thumb with data-images list
   if (t.dataset.images){
@@ -331,7 +337,7 @@ document.addEventListener('click', e => {
     LB.open(t.dataset.images.split('|').map((s, i) => ({ src: s, cap: caps[i] || t.dataset.title || '' })), 0); return;
   }
   const scope = t.closest('[data-gallery]') || t.closest('figure') || t.parentElement;
-  const nodes = $$('figure img, .strip button, [data-lb]', scope).filter(n => !n.dataset.images);
+  const nodes = $$('figure img, .strip button, .slide-grid button, [data-lb]', scope).filter(n => !n.dataset.images);
   const items = nodes.map(n => {
     const im = n.tagName === 'IMG' ? n : $('img', n);
     const fc = n.closest('figure') && $('figcaption', n.closest('figure'));
@@ -358,7 +364,9 @@ function initPage(){
   const main = $('main'); const page = document.body.dataset.page || '';
 
   // nav active state
-  $$('.nav-links a').forEach(a => a.classList.toggle('on', a.dataset.nav === page));
+  $$('.nav-links a.top').forEach(a => a.classList.toggle('on', a.dataset.nav === page));
+  const here = location.pathname.split('/').pop() || 'index.html';
+  $$('.nav-links .sub a').forEach(a => a.classList.toggle('cur', !a.getAttribute('href').includes('#') && a.getAttribute('href') === here));
 
   // reveal
   const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -8% 0px' });
@@ -432,7 +440,11 @@ async function go(url, push = true){
     cur.replaceWith(nm); nm.classList.add('entering');
     document.title = doc.title; document.body.dataset.page = doc.body.dataset.page || '';
     if (push) history.pushState({ soft: 1 }, '', u.href);
-    if (u.hash){ const t = document.getElementById(decodeURIComponent(u.hash.slice(1))); if (t){ requestAnimationFrame(() => t.scrollIntoView()); } else window.scrollTo(0, 0); }
+    if (u.hash){
+      const t = document.getElementById(decodeURIComponent(u.hash.slice(1)));
+      const toT = () => window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 80, behavior: 'instant' });
+      if (t){ requestAnimationFrame(toT); setTimeout(toT, 350); } else window.scrollTo(0, 0);
+    }
     else window.scrollTo({ top: 0, behavior: 'instant' });
     initPage();
   } catch (e){ location.href = u.href; }
