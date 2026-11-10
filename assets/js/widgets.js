@@ -110,16 +110,17 @@ W.enhanceCalc = el => {
 W.auxAdjust = el => {
   const M = { A:{ u:1, max:40 }, B:{ u:2, max:20 }, C:{ u:4, max:10 } }; // u: 0.01%p 단위
   const CAP = 100;
-  let cnt, order;
-  const reset = () => { cnt = { A:0, B:0, C:0 }; order = []; };
+  let cnt, order, last = null;
+  const reset = () => { cnt = { A:0, B:0, C:0 }; order = []; last = null; };
   el.innerHTML = `
-  <div class="widget-head"><h4>보조재 등록 · 자동 조정 데모</h4><small>일반 보조재 합산 상한 +1.00%p</small></div>
+  <div class="widget-head"><h4>보조재 등록 · 자동 조정 데모</h4><small>상한 +1.00%p · 숫자 직접 입력 · 버튼을 길게 누르면 연속 증감</small></div>
   <div class="widget-body"><div class="w-grid">
     <div>
       <div class="mats">${Object.keys(M).map(k => `
         <div class="mat" data-m="${k}"><div class="nm">${k}</div>
-          <div class="info">1개당 +${(M[k].u / 100).toFixed(2)}%p · 최대 ${M[k].max}개<br><b data-c="${k}">0개</b> <span data-v="${k}"></span></div>
-          <div class="ctr"><button data-dec="${k}" aria-label="${k} 빼기">−</button><button data-inc="${k}" aria-label="${k} 추가">+</button></div>
+          <div class="info">1개당 +${(M[k].u / 100).toFixed(2)}%p · 최대 ${M[k].max}개<br>
+            <label class="qty"><input type="number" inputmode="numeric" min="0" max="${M[k].max}" value="0" data-q="${k}" aria-label="${k} 수량">개</label> <span data-v="${k}"></span></div>
+          <div class="ctr"><button data-step="${k}" data-d="-1" aria-label="${k} 빼기">−</button><button data-step="${k}" data-d="1" aria-label="${k} 추가">+</button><button class="mx" data-max="${k}" aria-label="${k} 최대">최대</button></div>
         </div>`).join('')}
       </div>
       <div class="w-actions"><button class="btn sm" data-demo>포트폴리오 예시 재현 (A40·B20·C5 → C 추가)</button><button class="btn sm ghost" data-reset>초기화</button></div>
@@ -128,56 +129,101 @@ W.auxAdjust = el => {
       <div class="rowlbl">합산 보정</div>
       <div class="meter"><i></i></div>
       <div style="display:flex;justify-content:space-between;font-size:13px" class="muted"><span data-total></span><span>상한 +1.00%p</span></div>
-      <div class="rowlbl" style="margin-top:16px">등록 순서 <span class="muted" style="letter-spacing:0">(마지막이 가장 최근)</span></div>
+      <div class="rowlbl" style="margin-top:16px">상한 초과 시 차감 우선순위 <span class="muted" style="letter-spacing:0">(등록한 보조재의 내림차순)</span></div>
       <div data-order class="tags"></div>
       <div class="rowlbl" style="margin-top:16px">처리 로그</div>
-      <div class="logbox" data-log><span class="muted">재료를 추가해 보세요. 상한을 넘으면 최근 입력은 유지하고, 기존 재료를 등록 역순으로 줄입니다.</span></div>
+      <div class="logbox" data-log><span class="muted">재료를 추가해 보세요. 상한을 넘으면 방금 등록한 재료는 유지하고, 그보다 낮은 단계의 재료를 내림차순으로 줄입니다. 줄일 재료가 없으면 초과분은 버립니다.</span></div>
     </div>
   </div></div>`;
   const total = () => Object.keys(cnt).reduce((s, k) => s + cnt[k] * M[k].u, 0);
-  const log = (html) => { const l = $('[data-log]', el); if (l.querySelector('.muted')) l.innerHTML = ''; l.insertAdjacentHTML('afterbegin', `<div>${html}</div>`); };
+  const logEl = () => $('[data-log]', el);
+  const log = (html) => { const l = logEl(); if (l.querySelector('.muted')) l.innerHTML = ''; l.insertAdjacentHTML('afterbegin', `<div>${html}</div>`); last = null; };
+  // 같은 재료의 연속 입력은 로그 한 줄로 합침
+  const record = (k, dir, n, adj, over) => {
+    const now = Date.now(), l = logEl();
+    if (last && last.k === k && last.dir === dir && now - last.t < 1500 && l.firstElementChild){
+      last.n += n; for (const m in adj) last.adj[m] = (last.adj[m] || 0) + adj[m]; last.over = last.over || over; last.t = now;
+    } else {
+      if (l.querySelector('.muted')) l.innerHTML = '';
+      l.insertAdjacentHTML('afterbegin', '<div></div>');
+      last = { k, dir, n, adj: { ...adj }, over, t: now };
+    }
+    const adjTxt = Object.keys(last.adj).map(m => `${m} ${last.adj[m]}개 차감`).join(', ');
+    let line = `<span class="info">${k} ${dir > 0 ? '+' : '−'}${last.n}</span> <span class="muted">(현재 ${cnt[k]}개)</span>`;
+    if (adjTxt) line += ` → 상한 초과, <span class="warn">${adjTxt}</span>`;
+    if (last.over) line += ` → <span class="bad">조정할 재료 없음: 초과분 미반영</span>`;
+    l.firstElementChild.innerHTML = line;
+  };
   const draw = (flash = []) => {
     Object.keys(M).forEach(k => {
-      $(`[data-c=${k}]`, el).textContent = cnt[k] + '개';
-      $(`[data-v=${k}]`, el).textContent = cnt[k] ? `/ +${(cnt[k] * M[k].u / 100).toFixed(2)}%p` : '';
-      const m = $(`[data-m=${k}]`, el); m.classList.toggle('flash', flash.includes(k));
+      const q = $(`[data-q=${k}]`, el); if (document.activeElement !== q) q.value = cnt[k];
+      $(`[data-v=${k}]`, el).textContent = cnt[k] ? `+${(cnt[k] * M[k].u / 100).toFixed(2)}%p` : '';
+      $(`[data-m=${k}]`, el).classList.toggle('flash', flash.includes(k));
+      $(`[data-max=${k}]`, el).disabled = cnt[k] >= M[k].max;
     });
     const t = total();
     $('.meter i', el).style.width = Math.min(100, t / CAP * 100) + '%';
     $('[data-total]', el).innerHTML = `적용 <b style="color:#fff">+${(Math.min(t, CAP) / 100).toFixed(2)}%p</b>` + (t > CAP ? ` <span style="color:var(--warn)">(초과 ${((t - CAP) / 100).toFixed(2)}%p 미반영)</span>` : '');
-    $('[data-order]', el).innerHTML = order.filter(k => cnt[k] > 0).map(k => `<span class="tag gold">${k}</span>`).join('<span class="muted">→</span>') || '<span class="muted">-</span>';
+    const ks = Object.keys(M);
+    $('[data-order]', el).innerHTML = ks.slice().reverse().map(k => {
+      const low = ks.slice(0, ks.indexOf(k)).reverse();
+      const on = order[order.length - 1] === k;
+      return `<span class="tag ${on ? 'gold' : ''}" style="${on ? '' : 'opacity:.6'}">${k} 등록 → ${low.length ? low.join(' → ') + ' 차감' : '차감 없음 · 초과분 버림'}</span>`;
+    }).join('');
   };
   const inc = (k, n = 1, quiet = false) => {
     let added = 0;
     for (let i = 0; i < n; i++){ if (cnt[k] < M[k].max){ cnt[k]++; added++; } }
-    if (!added){ log(`<span class="warn">${k}: 최대 등록 개수(${M[k].max}개) 도달</span>`); draw(); return; }
+    if (!added){ if (!quiet) log(`<span class="warn">${k}: 최대 등록 개수(${M[k].max}개) 도달</span>`); draw(); return 0; }
     order = order.filter(x => x !== k); order.push(k);
+    // 기획서 규칙: 차감 우선순위는 등록한 보조재의 내림차순 (C 등록 → B → A, B 등록 → A, A 등록 → 차감 없음)
+    const keys = Object.keys(M), lower = keys.slice(0, keys.indexOf(k)).reverse();
     let over = total() - CAP; const adj = {};
     if (over > 0){
-      for (const m of order.slice(0, -1).reverse()){
+      for (const m of lower){
         while (over > 0 && cnt[m] > 0){ cnt[m]--; over -= M[m].u; adj[m] = (adj[m] || 0) + 1; }
         if (over <= 0) break;
       }
     }
-    const adjTxt = Object.keys(adj).map(m => `${m} ${adj[m]}개 차감`).join(', ');
-    if (!quiet){
-      let line = `<span class="info">${k} +${added}</span>`;
-      if (adjTxt) line += ` → 상한 초과, <span class="warn">${adjTxt}</span>`;
-      if (over > 0) line += ` → <span class="bad">조정할 재료 없음: 등록은 하되 초과분 미반영</span>`;
-      log(line);
-    }
+    if (!quiet) record(k, 1, added, adj, over > 0);
     draw(Object.keys(adj));
+    return added;
   };
+  const dec = (k, n = 1) => {
+    const d = Math.min(n, cnt[k]); if (!d) return 0;
+    cnt[k] -= d; record(k, -1, d, {}, false); draw(); return d;
+  };
+  const setTo = (k, v) => {
+    v = Math.max(0, Math.min(M[k].max, Math.round(+v || 0)));
+    if (v > cnt[k]) inc(k, v - cnt[k]); else if (v < cnt[k]) dec(k, cnt[k] - v); else draw();
+  };
+  // 버튼 길게 누르기 → 연속 증감
+  let holdT = null, holdI = null;
+  const stopHold = () => { clearTimeout(holdT); clearInterval(holdI); holdT = holdI = null; };
+  el.addEventListener('pointerdown', e => {
+    const b = e.target.closest('[data-step]'); if (!b || e.button !== 0) return;
+    e.preventDefault();
+    const k = b.dataset.step, d = +b.dataset.d;
+    const step = () => (d > 0 ? inc(k, 1) : dec(k, 1)) || stopHold();
+    stopHold(); step();
+    holdT = setTimeout(() => { holdI = setInterval(step, 70); }, 380);
+  });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => el.addEventListener(ev, stopHold));
+  el.addEventListener('change', e => { const q = e.target.closest('[data-q]'); if (q) setTo(q.dataset.q, q.value); });
+  el.addEventListener('keydown', e => {
+    const q = e.target.closest('[data-q]'); if (q && e.key === 'Enter'){ setTo(q.dataset.q, q.value); q.select(); }
+    const b = e.target.closest('[data-step]'); if (b && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); +b.dataset.d > 0 ? inc(b.dataset.step) : dec(b.dataset.step); }
+  });
+  el.addEventListener('focusin', e => { const q = e.target.closest('[data-q]'); if (q) setTimeout(() => q.select(), 0); });
   el.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.inc) inc(b.dataset.inc);
-    if (b.dataset.dec){ const k = b.dataset.dec; if (cnt[k] > 0){ cnt[k]--; log(`${k} -1`); draw(); } }
-    if (b.hasAttribute('data-reset')){ reset(); $('[data-log]', el).innerHTML = '<span class="muted">초기화했습니다.</span>'; draw(); }
+    if (b.dataset.max) setTo(b.dataset.max, M[b.dataset.max].max);
+    if (b.hasAttribute('data-reset')){ reset(); logEl().innerHTML = '<span class="muted">초기화했습니다.</span>'; draw(); }
     if (b.hasAttribute('data-demo')){
-      reset(); $('[data-log]', el).innerHTML = '';
+      reset(); logEl().innerHTML = '';
       inc('A', 40, true); inc('B', 20, true); inc('C', 5, true);
       log('등록 전: A 40개(+0.40) · B 20개(+0.40) · C 5개(+0.20) = <b>+1.00%p</b>');
-      setTimeout(() => inc('C', 5), 500);
+      setTimeout(() => { last = null; inc('C', 5); }, 500);
     }
   });
   reset(); draw();
