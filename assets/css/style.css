@@ -635,3 +635,8 @@ main.entering{animation:fade .5s ease}
 .bgm-ctl button.rep{width:auto;border-radius:99px;padding:0 12px;font:inherit;font-size:12px;margin-left:auto}
 .bgm-ctl button.rep.one{color:var(--gold-2);border-color:var(--gold)}
 .bgm.synth .bgm-ctl button.rep{opacity:.4}
+@media (max-width:860px){
+  .nav-item:hover>.sub,.nav-item:focus-within>.sub,.nav-item>.sub,.nav-item>.sub.wide{transform:none!important;left:auto!important}
+  .nav-item.has-sub.open>.sub{opacity:1!important;visibility:visible!important}
+  .nav-item.closing>.sub{opacity:1!important;visibility:visible!important}
+}
