@@ -116,9 +116,19 @@ NAV = """
       <button class="bgm-pick" aria-haspopup="true" aria-expanded="false" title="BGM 선택 · 볼륨"><span class="bgm-label">BGM OFF</span><svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4l4 4 4-4"/></svg></button>
       <button class="bgm-btn" aria-pressed="false" title="BGM 켜기"><span class="eq"><i></i><i></i><i></i><i></i></span></button>
       <div class="bgm-pop" hidden role="menu" aria-label="BGM 선택">
+        <div class="bgm-now">
+          <div class="bgm-now-t"><b data-now>BGM</b><span data-time>0:00 / 0:00</span></div>
+          <input type="range" class="bgm-seek" min="0" max="1000" value="0" step="1" aria-label="재생 위치">
+          <div class="bgm-ctl">
+            <button data-bgm="prev" title="이전 곡" aria-label="이전 곡"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M3 2h2v12H3zM14 2v12L6 8z"/></svg></button>
+            <button data-bgm="toggle" class="main" title="재생 / 정지" aria-label="재생 / 정지"><svg class="i-play" viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M4 2l10 6-10 6z"/></svg><svg class="i-pause" viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M3 2h4v12H3zM9 2h4v12H9z"/></svg></button>
+            <button data-bgm="next" title="다음 곡" aria-label="다음 곡"><svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor"><path d="M11 2h2v12h-2zM2 2v12l8-6z"/></svg></button>
+            <button data-bgm="repeat" class="rep" title="반복 방식 바꾸기"><span data-rep>전체 재생</span></button>
+          </div>
+        </div>
         <div class="bgm-pop-h">BGM 선택</div>
         <div class="bgm-list"></div>
-        <label class="bgm-vol"><span>볼륨</span><input type="range" min="0" max="1" step="0.01" aria-label="BGM 볼륨"></label>
+        <label class="bgm-vol"><span>볼륨</span><input type="range" class="bgm-volume" min="0" max="1" step="0.01" aria-label="BGM 볼륨"></label>
         <p class="bgm-note">게임 BGM: Juhani Junkala · cynicmusic(pixelsphere.org) · Yoiyami — CC0, OpenGameArt.org · M 키로 켜기/끄기</p>
       </div>
     </div>
@@ -150,7 +160,7 @@ LAYOUT = """<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{fonts}">
-<link rel="stylesheet" href="assets/css/style.css?v=14">
+<link rel="stylesheet" href="assets/css/style.css?v=15">
 </head>
 <body data-page="{page}">
 {gate}{nav}
@@ -158,8 +168,8 @@ LAYOUT = """<!doctype html>
 {main}
 </main>
 {footer}
-<script src="assets/js/widgets.js?v=14"></script>
-<script src="assets/js/main.js?v=14"></script>
+<script src="assets/js/widgets.js?v=15"></script>
+<script src="assets/js/main.js?v=15"></script>
 </body>
 </html>
 """

@@ -41,17 +41,19 @@ const BGM = (() => {
   };
   // CC0(퍼블릭 도메인) 게임 BGM — OpenGameArt.org, 음량은 배경용으로 맞춰 둠
   const FILE_TRACKS = {
-    peaceful:  { name: 'Peaceful Days',       desc: 'Juhani Junkala · 평화로운 마을', src: 'assets/audio/peaceful.m4a' },
-    home:      { name: 'A Place I Call Home', desc: 'Juhani Junkala · 포근한',       src: 'assets/audio/home.m4a' },
     innocence: { name: 'Innocence',           desc: 'Juhani Junkala · 잔잔한',       src: 'assets/audio/innocence.m4a' },
     newtown:   { name: 'A New Town',          desc: 'cynicmusic · 하프 솔로',        src: 'assets/audio/newtown.m4a' },
+    peaceful:  { name: 'Peaceful Days',       desc: 'Juhani Junkala · 평화로운 마을', src: 'assets/audio/peaceful.m4a' },
+    home:      { name: 'A Place I Call Home', desc: 'Juhani Junkala · 포근한',       src: 'assets/audio/home.m4a' },
     town:      { name: 'Town Theme',          desc: 'cynicmusic · 하프와 리코더',    src: 'assets/audio/town.m4a' },
     yoiyami:   { name: 'Deep Blue',           desc: 'Yoiyami · 앰비언트 피아노',     src: 'assets/audio/yoiyami.m4a' },
     august:    { name: 'Another August',      desc: 'cynicmusic · 몽환적인 앰비언트', src: 'assets/audio/august.m4a' }
   };
   const ALL = { ...FILE_TRACKS, ...TRACKS };
   const isFile = id => !!(ALL[id] && ALL[id].src);
-  let trackId = ALL[store.get('bgmTrack', '')] ? store.get('bgmTrack') : 'peaceful';
+  const fileIds = Object.keys(FILE_TRACKS);
+  let trackId = ALL[store.get('bgmTrack', '')] ? store.get('bgmTrack') : 'innocence';
+  let repeat = store.get('bgmRepeat', 'all') === 'one' ? 'one' : 'all'; // 'all': 끝나면 다음 곡 · 'one': 한 곡 반복
   let synthId = TRACKS[trackId] ? trackId : 'calm';
   let P = TRACKS[synthId], CH = P.ch, mel = 3;
   const hz = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -179,7 +181,12 @@ const BGM = (() => {
     fadeT = setInterval(step, 30); step();
   }
   async function startFile(id){
-    if (!fileEl){ fileEl = new Audio(); fileEl.loop = true; fileEl.preload = 'auto'; }
+    if (!fileEl){
+      fileEl = new Audio(); fileEl.preload = 'auto';
+      // 곡이 끝나면 다음 곡으로 (한 곡 반복 모드에서는 loop로 반복되어 ended가 오지 않음)
+      fileEl.addEventListener('ended', () => { if (playing && isFile(trackId)) step(1); });
+    }
+    fileEl.loop = repeat === 'one';
     const src = new URL(ALL[id].src, location.href).href;
     if (fileEl.src !== src){ fileEl.src = src; }
     fileEl.volume = 0;
@@ -245,6 +252,14 @@ const BGM = (() => {
     }
     emit();
   }
+  // 게임 BGM 목록 안에서 이전/다음 곡 (실시간 생성 곡에서 누르면 게임 BGM 첫/마지막 곡으로)
+  async function step(dir){
+    let id;
+    if (isFile(trackId)){ const i = fileIds.indexOf(trackId); id = fileIds[(i + dir + fileIds.length) % fileIds.length]; }
+    else id = dir > 0 ? fileIds[0] : fileIds[fileIds.length - 1];
+    await setTrack(id);
+    if (!playing) await play();
+  }
   function apply(){
     if (!playing) return;
     if (isFile(trackId)){ if (fileEl) fadeFile(level(), 500); }
@@ -260,6 +275,11 @@ const BGM = (() => {
     setTrack,
     get track(){ return trackId; },
     get audio(){ return fileEl; },
+    isFileTrack: isFile,
+    next(){ step(1); }, prev(){ step(-1); },
+    get repeat(){ return repeat; },
+    setRepeat(m){ repeat = m === 'one' ? 'one' : 'all'; store.set('bgmRepeat', repeat); if (fileEl) fileEl.loop = repeat === 'one'; emit(); },
+    seek(sec){ if (fileEl && isFinite(fileEl.duration)) fileEl.currentTime = Math.max(0, Math.min(fileEl.duration - .2, sec)); },
     tracks: Object.entries(ALL).map(([id, t]) => ({ id, name: t.name, desc: t.desc, group: t.src ? '게임 BGM · CC0' : '실시간 생성' })),
     on(f){ listeners.add(f); }
   };
@@ -271,7 +291,7 @@ window.BGM = BGM;
    ========================================================= */
 function initHeader(){
   const box = $('.bgm'); if (!box) return;
-  const btn = $('.bgm-btn', box), rng = $('input[type=range]', box), lbl = $('.bgm-label', box);
+  const btn = $('.bgm-btn', box), rng = $('.bgm-volume', box), lbl = $('.bgm-label', box);
   const pick = $('.bgm-pick', box), pop = $('.bgm-pop', box), list = $('.bgm-list', box);
   const curName = () => (BGM.tracks.find(t => t.id === BGM.track) || {}).name || 'BGM';
   const sync = on => {
@@ -305,7 +325,44 @@ function initHeader(){
   }
   document.addEventListener('click', e => { if (pop && !pop.hidden && !e.target.closest('.bgm')) setOpen(false); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
-  BGM.on(sync); sync(false);
+  // ---- 지금 재생 중: 재생 위치 · 시간 · 이전/다음 · 반복 방식 ----
+  const seek = $('.bgm-seek', box), tEl = $('[data-time]', box), nowEl = $('[data-now]', box), repEl = $('[data-rep]', box);
+  let dragging = false;
+  const mmss = s => !isFinite(s) ? '0:00' : `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  const updNow = () => {
+    if (!seek) return;
+    const fileMode = BGM.isFileTrack(BGM.track), a = BGM.audio;
+    box.classList.toggle('synth', !fileMode);
+    nowEl.textContent = curName();
+    repEl.textContent = BGM.repeat === 'one' ? '한 곡 반복' : '전체 재생';
+    $('[data-bgm=repeat]', box).classList.toggle('one', BGM.repeat === 'one');
+    if (!fileMode){ tEl.textContent = '실시간 생성 · 끝없이 재생'; seek.disabled = true; seek.value = 0; return; }
+    seek.disabled = false;
+    const ok = a && a.src.endsWith(`/${BGM.track}.m4a`), dur = ok ? a.duration : NaN, cur = ok ? a.currentTime : 0;
+    tEl.textContent = `${mmss(cur)} / ${mmss(dur)}`;
+    if (!dragging) seek.value = isFinite(dur) && dur > 0 ? Math.round(cur / dur * 1000) : 0;
+    seek.style.setProperty('--p', (seek.value / 10) + '%');
+  };
+  if (seek){
+    seek.addEventListener('input', () => {
+      dragging = true; const a = BGM.audio;
+      if (a && isFinite(a.duration)) tEl.textContent = `${mmss(seek.value / 1000 * a.duration)} / ${mmss(a.duration)}`;
+      seek.style.setProperty('--p', (seek.value / 10) + '%');
+    });
+    seek.addEventListener('change', () => { const a = BGM.audio; if (a && isFinite(a.duration)) BGM.seek(seek.value / 1000 * a.duration); dragging = false; updNow(); });
+    setInterval(() => { if (pop && !pop.hidden) updNow(); }, 250);
+    box.addEventListener('click', e => {
+      const b = e.target.closest('[data-bgm]'); if (!b) return;
+      const act = b.dataset.bgm;
+      if (act === 'prev') BGM.prev();
+      if (act === 'next') BGM.next();
+      if (act === 'toggle') BGM.toggle();
+      if (act === 'repeat') BGM.setRepeat(BGM.repeat === 'one' ? 'all' : 'one');
+      setTimeout(updNow, 50);
+    });
+    BGM.on(() => updNow());
+  }
+  BGM.on(sync); sync(false); updNow && updNow();
   btn.addEventListener('click', () => BGM.toggle());
   if (rng){ rng.value = BGM.volume; rng.addEventListener('input', () => BGM.setVolume(parseFloat(rng.value))); }
   const mb = $('.menu-btn'), links = $('.nav-links');
