@@ -65,7 +65,7 @@ GATE = """
     </div>
     <span class="eyebrow">Portfolio · System &amp; Content Designer</span>
     <h1>JEONG SEOKWON</h1>
-    <p class="motto">깊이는 발견하게, 시작은 가볍게.</p>
+    <p class="motto">규칙은 단단하게, 시작은 가볍게.</p>
     <div class="gate-actions">
       <button class="btn primary" data-enter="sound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>BGM과 함께 입장</button>
       <button class="btn ghost" data-enter="mute">조용히 입장</button>
@@ -160,7 +160,7 @@ LAYOUT = """<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="{fonts}">
-<link rel="stylesheet" href="assets/css/style.css?v=16">
+<link rel="stylesheet" href="assets/css/style.css?v=17">
 </head>
 <body data-page="{page}">
 {gate}{nav}
